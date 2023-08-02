@@ -1,14 +1,14 @@
 import logo from "./image/logo.png";
 import addTaskBtn from "./image/addTaskBtn.png";
 import deleteBtn from "./image/deleteBtn.png";
-import checkboxFalse from "./image/checkboxFalse.png";
-import checkboxTrue from "./image/checkboxTrue.png";
+// import checkboxFalse from "./image/checkboxFalse.png";
+// import checkboxTrue from "./image/checkboxTrue.png";
 import emptyListImg from "./image/emptyList.png";
 
 // 建立新的任務
 function NewTaskInput() {
   return (
-    <div className="p-1 pl-4 rounded-[10px] bg-white flex mt-6">
+    <div className="p-1 pl-4 rounded-[10px] bg-white flex mt-6 shadow-input-shadow">
       <input
         className="grow placeholder:text-primary-gray placeholder:my-4 "
         type="text"
@@ -25,30 +25,41 @@ function NewTaskInput() {
 function TasksList() {
   const tasksData = [
     { id: 1, content: "吃葡萄", isDone: false },
+    { id: 1, content: "吃葡萄", isDone: false },
+    { id: 2, content: "檸檬拿去丟", isDone: true },
     { id: 2, content: "檸檬拿去丟", isDone: true },
   ];
+  const tasksQtu = tasksData.length;
 
   return (
-    <div className="mt-4 rounded-[10px] bg-white">
+    <div className="mt-4 rounded-[10px] bg-white text-[14px] shadow-input-shadow">
       {/* tag */}
-      <div className="w-100 flex">
-        <div className="py-4 w-1/3 text-center font-bold text-[14px] rounded-tl-[10px]">
+      <div className="w-full flex">
+        <div className="py-4 w-1/3 text-center font-bold text-[14px] border-b-2 border-baseline-gray-700 rounded-tl-[10px]">
           全部
         </div>
-        <div className="py-4 w-1/3 text-center font-bold text-[14px] text-primary-gray">
+        <div className="py-4 w-1/3 text-center font-bold text-[14px] text-primary-gray border-b-2 border-baseline-gray-400">
           待完成
         </div>
-        <div className="py-4 w-1/3 text-center font-bold text-[14px] text-primary-gray rounded-tr-[10px]">
+        <div className="py-4 w-1/3 text-center font-bold text-[14px] text-primary-gray border-b-2 border-baseline-gray-400 rounded-tr-[10px]">
           已完成
         </div>
       </div>
       {/* tasks list */}
-      <div className="">
-        <TaskItem id="3" content="整理電腦資料夾" isDone="false" />
-        <TaskItem id="2" content="整理" isDone="true" />
-        {/* {tasksData.map((item) => {
-          <TaskItem id={item.id} content={item.content} isDone={item.isDone} />;
-        })} */}
+      <div className="p-6">
+        {tasksData.map((item) => {
+          return (
+            <TaskItem
+              id={item.id}
+              content={item.content}
+              isDone={item.isDone}
+            />
+          );
+        })}
+        <div className="mt-6 pr-8 flex justify-between items-start">
+          <span>{tasksQtu} 個待完成項目</span>
+          <span className=" text-primary-gray">清除已完成項目</span>
+        </div>
       </div>
     </div>
   );
@@ -56,18 +67,18 @@ function TasksList() {
 
 // 單個 task
 function TaskItem({ id, content, isDone }) {
-  const isChecked = isDone ? "checked" : "";
+  // const isChecked = isDone ? "checked" : "";
 
   return (
-    <div className="p-6 flex group" data-taskId={id}>
-      <label className="w-100 flex items-start grow m-l-">
+    <div className="pt-4 flex group" data-taskId={id}>
+      <label className="w-full flex items-start grow m-l-">
         <input className="w-[20px] h-[20px]" type="checkbox" />
-        <span className="grow pl-9 pb-4 border-b border-light-gray">
+        <span className="grow ml-[-20px] pl-9 leading-[20px] min-h-[36px] border-b border-baseline-gray-500">
           {content}
         </span>
       </label>
-      <button className="ml-4 hidden group-hover:block">
-        <img src={deleteBtn} alt="deleteBtn" />
+      <button className="ml-4 flex items-start invisible group-hover:visible">
+        <img className=" align-top" src={deleteBtn} alt="deleteBtn" />
       </button>
     </div>
   );
@@ -92,9 +103,9 @@ export default function TasksPage() {
   const tasks = isEmpty ? <EmptyList /> : <TasksList />;
 
   return (
-    <div className="w-100 h-screen bg-tasksPageBg flex flex-col items-center">
+    <div className="w-full h-screen bg-tasksPageBg flex flex-col items-center">
       {/* header */}
-      <header className="w-[1028px] flex justify-between items-center px-8 py-1 border-2 border-black">
+      <header className="w-[1028px] flex justify-between items-center px-8 py-1">
         <div className="h-10">
           <img src={logo} alt="logo" />
         </div>
