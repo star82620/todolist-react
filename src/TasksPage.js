@@ -45,6 +45,7 @@ function TasksList() {
       {/* tasks list */}
       <div className="">
         <TaskItem id="3" content="整理電腦資料夾" isDone="false" />
+        <TaskItem id="2" content="整理" isDone="true" />
         {/* {tasksData.map((item) => {
           <TaskItem id={item.id} content={item.content} isDone={item.isDone} />;
         })} */}
@@ -58,14 +59,14 @@ function TaskItem({ id, content, isDone }) {
   const isChecked = isDone ? "checked" : "";
 
   return (
-    <div className="p-6 flex " data-taskId={id}>
-      <label className="w-100 flex items-start grow">
-        <input className="" type="checkbox" checked={isChecked} />
+    <div className="p-6 flex group" data-taskId={id}>
+      <label className="w-100 flex items-start grow m-l-">
+        <input className="w-[20px] h-[20px]" type="checkbox" />
         <span className="grow pl-9 pb-4 border-b border-light-gray">
           {content}
         </span>
       </label>
-      <button>
+      <button className="ml-4 hidden group-hover:block">
         <img src={deleteBtn} alt="deleteBtn" />
       </button>
     </div>
