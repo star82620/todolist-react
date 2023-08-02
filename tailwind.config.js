@@ -5,8 +5,8 @@ module.exports = {
     extend: {
       backgroundImage: {
         tasksPageBg: "linear-gradient(177deg, #FFD370 54%, #FFFFFF 54%)",
-        taskCheckboxTrue: "url('/src/image/checkboxTrue.png')",
-        taskCheckboxFalse: "url('/src/image/checkboxFalse.png')",
+        // checkboxTrue: "url('/src/image/checkboxTrue.png')",
+        // checkboxFalse: "url('/src/image/checkboxFalse.png')",
       },
       colors: {
         "primary-yellow": "#FFD370",

@@ -6,7 +6,7 @@ import checkboxTrue from "./image/checkboxTrue.png";
 import emptyListImg from "./image/emptyList.png";
 
 // 建立新的任務
-function AddTask() {
+function NewTaskInput() {
   return (
     <div className="p-1 pl-4 rounded-[10px] bg-white flex mt-6">
       <input
@@ -53,18 +53,18 @@ function TasksList() {
   );
 }
 
+// 單個 task
 function TaskItem({ id, content, isDone }) {
   const isChecked = isDone ? "checked" : "";
+
   return (
-    <div className="flex p-6" data-taskId={id}>
-      <input
-        className="appearance-none bg-taskCheckboxFalse"
-        type="checkbox"
-        checked={isChecked}
-      />
-      <p className="grow pl-9 pb-4 border-b border-light-gray">
-        {content + isDone}
-      </p>
+    <div className="p-6 flex " data-taskId={id}>
+      <label className="w-100 flex items-start grow">
+        <input className="" type="checkbox" checked={isChecked} />
+        <span className="grow pl-9 pb-4 border-b border-light-gray">
+          {content}
+        </span>
+      </label>
       <button>
         <img src={deleteBtn} alt="deleteBtn" />
       </button>
@@ -73,7 +73,7 @@ function TaskItem({ id, content, isDone }) {
 }
 
 // 如果 todos 列表是空的
-function EmptyTasksList() {
+function EmptyList() {
   return (
     <div className="mt-[60px] flex flex-col items-center">
       <p>目前尚無待辦事項</p>
@@ -87,8 +87,8 @@ function EmptyTasksList() {
 // PAGE
 export default function TasksPage() {
   const userName = "王小明";
-  const isDataNull = false; //看 GET /todos 有沒有內容
-  const hiddenList = isDataNull ? <EmptyTasksList /> : <TasksList />;
+  const isEmpty = false; //看 GET /todos 有沒有內容
+  const tasks = isEmpty ? <EmptyList /> : <TasksList />;
 
   return (
     <div className="w-100 h-screen bg-tasksPageBg flex flex-col items-center">
@@ -106,8 +106,8 @@ export default function TasksPage() {
       </header>
       {/* main */}
       <main className="w-[500px]">
-        <AddTask />
-        {hiddenList}
+        <NewTaskInput />
+        {tasks}
       </main>
     </div>
   );
