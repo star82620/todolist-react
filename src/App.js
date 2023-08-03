@@ -1,6 +1,5 @@
 import "./App.css";
-import TasksPage from "./TasksPage.js";
-// import logo from "./image/logo.png";
+import TasksPage from "./components/TasksPage";
 
 function App() {
   return (
