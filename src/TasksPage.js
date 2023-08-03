@@ -1,6 +1,6 @@
 import logo from "./image/logo.png";
-import addTaskBtn from "./image/addTaskBtn.png";
-import deleteBtn from "./image/deleteBtn.png";
+import createTaskBtn from "./image/addTaskBtn.png";
+import deleteTaskBtn from "./image/deleteBtn.png";
 // import checkboxFalse from "./image/checkboxFalse.png";
 // import checkboxTrue from "./image/checkboxTrue.png";
 import emptyListImg from "./image/emptyList.png";
@@ -15,7 +15,11 @@ function NewTaskInput() {
         placeholder="新增待辦事項"
       />
       <button className="w-[40px]" type="submit">
-        <img className="align-baseline" src={addTaskBtn} alt="addTaskBtn" />
+        <img
+          className="align-baseline"
+          src={createTaskBtn}
+          alt="createTaskBtn"
+        />
       </button>
     </div>
   );
@@ -47,15 +51,9 @@ function TasksList() {
       </div>
       {/* tasks list */}
       <div className="p-6">
-        {tasksData.map((item) => {
-          return (
-            <TaskItem
-              id={item.id}
-              content={item.content}
-              isDone={item.isDone}
-            />
-          );
-        })}
+        {tasksData.map((item) => (
+          <TaskItem id={item.id} content={item.content} isDone={item.isDone} />
+        ))}
         <div className="mt-6 pr-8 flex justify-between items-start">
           <span>{tasksQtu} 個待完成項目</span>
           <span className=" text-primary-gray">清除已完成項目</span>
@@ -67,18 +65,16 @@ function TasksList() {
 
 // 單個 task
 function TaskItem({ id, content, isDone }) {
-  // const isChecked = isDone ? "checked" : "";
-
   return (
     <div className="pt-4 flex group" data-taskId={id}>
       <label className="w-full flex items-start grow m-l-">
-        <input className="w-[20px] h-[20px]" type="checkbox" />
+        <input className="w-[20px] h-[20px]" type="checkbox" checked={isDone} />
         <span className="grow ml-[-20px] pl-9 leading-[20px] min-h-[36px] border-b border-baseline-gray-500">
           {content}
         </span>
       </label>
       <button className="ml-4 flex items-start invisible group-hover:visible">
-        <img className=" align-top" src={deleteBtn} alt="deleteBtn" />
+        <img className=" align-top" src={deleteTaskBtn} alt="deleteTaskBtn" />
       </button>
     </div>
   );
