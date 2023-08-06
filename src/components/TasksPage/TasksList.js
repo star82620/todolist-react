@@ -28,7 +28,7 @@ export default function TasksList({ tasksState, setTasksState }) {
     console.log("Done");
   }
 
-  const handleDone = (targetIndex) => {
+  function handleDone(targetIndex) {
     //點擊目標的 index 如果和 tasksState 資料的 index 一樣，就把 isDone 翻轉並回傳 item
     //將改好的資料賦值給 newTasks，並執行 setTasksState 把資料修正
     const newTasks = tasksState.map((item, index) => {
@@ -39,8 +39,9 @@ export default function TasksList({ tasksState, setTasksState }) {
       return item;
     });
     setTasksState(newTasks);
-  };
-  const handleValue = (targetIndex, newValue) => {
+  }
+
+  function handleValue(targetIndex, newValue) {
     const newTasks = tasksState.map((item, index) => {
       if (index === targetIndex) {
         item.content = newValue;
@@ -49,15 +50,21 @@ export default function TasksList({ tasksState, setTasksState }) {
       return item;
     });
     setTasksState(newTasks);
-  };
+  }
 
-  const handleDelete = (targetIndex) => {
-    console.log(targetIndex);
+  function handleDelete(targetIndex) {
     const newTasks = tasksState.filter((item, index) => {
       return index !== targetIndex;
     });
     setTasksState(newTasks);
-  };
+  }
+
+  function deleteDone() {
+    const newTasks = tasksState.filter((item) => {
+      return item.isDone === true;
+    });
+    setTasksState(newTasks);
+  }
 
   return (
     <div className="mt-4 rounded-[10px] bg-white text-[14px] shadow-input-shadow">
@@ -98,7 +105,14 @@ export default function TasksList({ tasksState, setTasksState }) {
         ))}
         <div className="mt-6 pr-8 flex justify-between items-start">
           <span>{tasksLength} 個待完成項目</span>
-          <span className=" text-primary-gray">清除已完成項目</span>
+          <button
+            className=" text-primary-gray"
+            onClick={() => {
+              deleteDone();
+            }}
+          >
+            清除已完成項目
+          </button>
         </div>
       </div>
     </div>

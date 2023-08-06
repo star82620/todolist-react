@@ -20,7 +20,7 @@ export default function TasksPage() {
   return (
     <div className="w-full h-screen bg-tasksPageBg flex flex-col items-center">
       {/* header */}
-      <header className="w-[1028px] flex justify-between items-center px-8 py-1">
+      <header className="w-[1028px] flex justify-between items-center px-8 py-4">
         <div className="h-10">
           <img src={logo} alt="logo" />
         </div>
@@ -32,7 +32,7 @@ export default function TasksPage() {
         </div>
       </header>
       {/* main */}
-      <main className="w-[500px]">
+      <main className="w-[500px] mt-6">
         <NewTaskInput tasksState={tasksState} setTasksState={setTasksState} />
         <TasksList tasksState={tasksState} setTasksState={setTasksState} />
       </main>

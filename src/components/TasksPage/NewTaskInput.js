@@ -21,7 +21,7 @@ export default function NewTaskInput({ tasksState, setTasksState }) {
   }
 
   return (
-    <div className="p-1 pl-4 rounded-[10px] bg-white flex mt-6 shadow-input-shadow">
+    <div className="p-1 pl-4 rounded-[10px] bg-white flex shadow-input-shadow">
       <input
         className="grow placeholder:text-primary-gray placeholder:my-4"
         type="text"
