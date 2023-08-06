@@ -1,4 +1,3 @@
-import { useState } from "react";
 import deleteTaskBtn from "../../images/deleteBtn.png";
 
 // Update: edit
@@ -10,11 +9,13 @@ export default function TaskItem({
   id,
   content,
   isDone,
+  index,
   tasksState,
   setTasksState,
+  handleDone,
+  handleValue,
+  handleDelete,
 }) {
-  function foo() {}
-
   return (
     <div className="flex group" data-id={id}>
       <label className="w-full flex items-start grow pb-4  border-b">
@@ -23,21 +24,28 @@ export default function TaskItem({
           type="checkbox"
           defaultChecked={isDone}
           onChange={(e) => {
-            console.log(e.target.checked);
+            handleDone(index);
           }}
         />
         <input
           className="grow ml-4 min-h-[14px] border-baseline-gray-500 focus:outline-none  focus:text-primary-gray focus:font-bold"
-          readOnly
-          value={content}
+          type="text"
+          // readOnly={false} //這裡要寫一個 setFunction
+          defaultValue={content}
           // // 這個地方也要改 setFunction
-          // onChange={(e) => {
-          //   console.log(e.target.value);
-          // }}
-          // onDoubleClick={foo}
+          onChange={(e) => {
+            handleValue(index, e.target.value);
+          }}
         />
       </label>
-      <button className="ml-4 flex items-start invisible group-hover:visible">
+      <button
+        className="ml-4 flex items-start invisible group-hover:visible"
+        type="button"
+        onClick={(e) => {
+          console.log("type", e.target);
+          handleDelete(index);
+        }}
+      >
         <img className="" src={deleteTaskBtn} alt="deleteTaskBtn" />
       </button>
     </div>

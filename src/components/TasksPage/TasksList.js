@@ -1,4 +1,3 @@
-import { useState } from "react";
 import TaskItem from "./TaskItem";
 import emptyListImg from "../../images/emptyList.png";
 
@@ -29,6 +28,37 @@ export default function TasksList({ tasksState, setTasksState }) {
     console.log("Done");
   }
 
+  const handleDone = (targetIndex) => {
+    //點擊目標的 index 如果和 tasksState 資料的 index 一樣，就把 isDone 翻轉並回傳 item
+    //將改好的資料賦值給 newTasks，並執行 setTasksState 把資料修正
+    const newTasks = tasksState.map((item, index) => {
+      if (index === targetIndex) {
+        item.isDone = !item.isDone;
+        return item;
+      }
+      return item;
+    });
+    setTasksState(newTasks);
+  };
+  const handleValue = (targetIndex, newValue) => {
+    const newTasks = tasksState.map((item, index) => {
+      if (index === targetIndex) {
+        item.content = newValue;
+        return item;
+      }
+      return item;
+    });
+    setTasksState(newTasks);
+  };
+
+  const handleDelete = (targetIndex) => {
+    console.log(targetIndex);
+    const newTasks = tasksState.filter((item, index) => {
+      return index !== targetIndex;
+    });
+    setTasksState(newTasks);
+  };
+
   return (
     <div className="mt-4 rounded-[10px] bg-white text-[14px] shadow-input-shadow">
       {/* tag */}
@@ -54,12 +84,16 @@ export default function TasksList({ tasksState, setTasksState }) {
       </div>
       {/* tasks list */}
       <div className="p-6 flex flex-col gap-4">
-        {tasksState.map((item) => (
+        {tasksState.map((item, index) => (
           <TaskItem
             key={item.id}
+            index={index}
             {...item}
             tasksState={tasksState}
             setTasksState={setTasksState}
+            handleDone={handleDone}
+            handleValue={handleValue}
+            handleDelete={handleDelete}
           />
         ))}
         <div className="mt-6 pr-8 flex justify-between items-start">

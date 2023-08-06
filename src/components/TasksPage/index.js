@@ -15,6 +15,7 @@ export default function TasksPage() {
 
   //動態 taskData
   const [tasksState, setTasksState] = useState(tasksData);
+  console.log("tasksState", tasksState);
 
   return (
     <div className="w-full h-screen bg-tasksPageBg flex flex-col items-center">
