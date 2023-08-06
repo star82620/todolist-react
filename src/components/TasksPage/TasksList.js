@@ -61,7 +61,7 @@ export default function TasksList({ tasksState, setTasksState }) {
 
   function deleteDone() {
     const newTasks = tasksState.filter((item) => {
-      return item.isDone === true;
+      return item.isDone === false;
     });
     setTasksState(newTasks);
   }
