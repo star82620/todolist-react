@@ -1,19 +1,12 @@
 import TaskItem from "./TaskItem";
-import emptyListImg from "../../images/emptyList.png";
+import EmptyTasks from "./EmptyTasks";
 
 // ToDo 列表
 export default function TasksList({ tasksState, setTasksState }) {
   const tasksLength = tasksState.length;
 
   if (tasksLength < 1) {
-    return (
-      <div className="mt-[60px] flex flex-col items-center">
-        <p>目前尚無待辦事項</p>
-        <div className="w-[240px] mt-4">
-          <img src={emptyListImg} alt="emptyListImg" />
-        </div>
-      </div>
-    );
+    return <EmptyTasks />;
   }
 
   function filterAll() {
