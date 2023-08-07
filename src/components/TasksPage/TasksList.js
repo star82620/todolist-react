@@ -77,7 +77,7 @@ export default function TasksList({ tasksState, setTasksState }) {
           全部
         </div>
         <div
-          className={`py-4 w-1/3 text-center font-bold text-[14px] text-primary-gray border-b-2 border-baseline-gray-400`}
+          className="py-4 w-1/3 text-center font-bold text-[14px] text-primary-gray border-b-2 border-baseline-gray-400"
           onClick={filterDoing}
         >
           待完成
@@ -95,7 +95,9 @@ export default function TasksList({ tasksState, setTasksState }) {
           <TaskItem
             key={item.id}
             index={index}
-            {...item}
+            id={item.id}
+            content={item.content}
+            isDone={item.isDone}
             tasksState={tasksState}
             setTasksState={setTasksState}
             handleDone={handleDone}
@@ -105,12 +107,7 @@ export default function TasksList({ tasksState, setTasksState }) {
         ))}
         <div className="mt-6 pr-8 flex justify-between items-start">
           <span>{tasksLength} 個待完成項目</span>
-          <button
-            className=" text-primary-gray"
-            onClick={() => {
-              deleteDone();
-            }}
-          >
+          <button className=" text-primary-gray" onClick={deleteDone}>
             清除已完成項目
           </button>
         </div>
