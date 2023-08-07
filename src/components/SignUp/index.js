@@ -7,7 +7,7 @@ export default function SignUp() {
   return (
     <div className="w-full h-screen bg-primary-yellow flex flex-col justify-center items-center px-5">
       <div className="max-w-[800px] w-full flex justify-between ">
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col items-center">
           <Logo width="313" height="48" />
           <div className="w-[386px] mt-4">
             <img src={cover} />
@@ -20,7 +20,7 @@ export default function SignUp() {
               <TextInput label="Email" placeholder="請輸入Email" />
               <TextInput label="您的暱稱" placeholder="請輸入您的暱稱" />
               <TextInput label="密碼" placeholder="請輸入密碼" />
-              <TextInput label="密碼" placeholder="請輸入密碼" />
+              <TextInput label="再次輸入密碼" placeholder="請再次輸入密碼s" />
             </div>
             <button
               className="rounded-[10px] px-12 py-3 my-0 mx-auto bg-black text-white"
