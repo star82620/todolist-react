@@ -8,18 +8,24 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
     console.log(Object.values(signUpState));
   }
 
-  function postApi(postData) {
-    const apiUrl = "https://todoo.5xcamp.us/users";
-    fetch(apiUrl, { method: "POST", body: JSON.stringify(postData) })
-      .then((res) => res.json())
-      .then((data) => console.log(data));
-  }
-
   function submitSignUp() {
-    console.log(signUpState);
     const postData = { user: signUpState };
-    console.log(postData);
-    postApi(postData);
+    const apiUrl = "https://todoo.5xcamp.us/users";
+    fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(postData),
+    })
+      .then((res) => {
+        let headers = res.headers;
+        let token = headers.get("authorization");
+        token = token.replace("Bearer ", "");
+        localStorage.setItem("userToken", token);
+
+        return res.json();
+      })
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error));
   }
 
   return (

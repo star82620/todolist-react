@@ -1,4 +1,3 @@
-import logo from "../../images/logo.png";
 import Logo from "../Logo";
 import cover from "../../images/cover-sm.png";
 import SignUpForm from "./SignUpForm";
