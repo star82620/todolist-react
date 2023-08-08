@@ -23,28 +23,19 @@ export default function TaskItem({
           className="appearance-none checkedStyle"
           type="checkbox"
           defaultChecked={isDone}
-          onChange={(e) => {
-            handleDone(index);
-          }}
+          onChange={() => handleDone(index)}
         />
         <input
           className="grow ml-4 min-h-[14px] border-baseline-gray-500 focus:outline-none  focus:text-primary-gray focus:font-bold"
           type="text"
-          // readOnly={false} //這裡要寫一個 setFunction
           defaultValue={content}
-          // // 這個地方也要改 setFunction
-          onChange={(e) => {
-            handleValue(index, e.target.value);
-          }}
+          onChange={(e) => handleValue(index, e.target.value)}
         />
       </label>
       <button
         className="ml-4 flex items-start invisible group-hover:visible"
         type="button"
-        onClick={(e) => {
-          console.log("type", e.target);
-          handleDelete(index);
-        }}
+        onClick={() => handleDelete(index)}
       >
         <img className="" src={deleteTaskBtn} alt="deleteTaskBtn" />
       </button>

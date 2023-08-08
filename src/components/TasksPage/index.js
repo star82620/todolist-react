@@ -1,7 +1,7 @@
 import { useState } from "react";
-import logo from "../../images/logo.png";
 import NewTaskInput from "./NewTaskInput";
 import TasksList from "./TasksList";
+import Header from "./Header";
 
 // PAGE
 export default function TasksPage() {
@@ -19,19 +19,8 @@ export default function TasksPage() {
 
   return (
     <div className="w-full h-screen bg-tasksPageBg flex flex-col items-center">
-      {/* header */}
-      <header className="w-[1028px] flex justify-between items-center px-8 py-4">
-        <div className="h-10">
-          <img src={logo} alt="logo" />
-        </div>
-        <div className="flex">
-          <p className="font-bold">{userName}的待辦清單</p>
-          <a className="ml-6" href="">
-            登出
-          </a>
-        </div>
-      </header>
-      {/* main */}
+      <Header userName={userName} />
+
       <main className="w-[500px] mt-6">
         <NewTaskInput tasksState={tasksState} setTasksState={setTasksState} />
         <TasksList tasksState={tasksState} setTasksState={setTasksState} />

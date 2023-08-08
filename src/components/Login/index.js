@@ -10,7 +10,7 @@ export default function Login() {
         <div className="flex flex-col items-start">
           <Logo width="313" height="48" />
           <div className="w-[386px] mt-4">
-            <img src={cover} />
+            <img src={cover} alt="cover" />
           </div>
         </div>
         <section className="w-[304px] flex flex-col justify-center">
