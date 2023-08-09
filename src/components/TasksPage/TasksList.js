@@ -3,11 +3,11 @@ import EmptyTasks from "./EmptyTasks";
 
 // ToDo 列表
 export default function TasksList({ tasksState, setTasksState }) {
-  const tasksLength = tasksState.length;
+  // const tasksLength = tasksState.length || 0;
 
-  if (tasksLength < 1) {
-    return <EmptyTasks />;
-  }
+  // if (tasksLength < 1) {
+  //   return <EmptyTasks />;
+  // }
 
   function filterAll() {
     console.log("ALL");
@@ -84,7 +84,7 @@ export default function TasksList({ tasksState, setTasksState }) {
       </div>
       {/* tasks list */}
       <div className="p-6 flex flex-col gap-4">
-        {tasksState.map((item, index) => (
+        {/* {tasksState.map((item, index) => (
           <TaskItem
             key={item.id}
             index={index}
@@ -97,9 +97,9 @@ export default function TasksList({ tasksState, setTasksState }) {
             handleValue={handleValue}
             handleDelete={handleDelete}
           />
-        ))}
+        ))} */}
         <div className="mt-6 pr-8 flex justify-between items-start">
-          <span>{tasksLength} 個待完成項目</span>
+          {/* <span>{tasksLength} 個待完成項目</span> */}
           <button className=" text-primary-gray" onClick={deleteDone}>
             清除已完成項目
           </button>
