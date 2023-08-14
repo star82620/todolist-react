@@ -39,6 +39,7 @@ export default function TasksPage({ token }) {
 
   useEffect(() => {
     getData();
+    console.log("我有工作");
   }, []);
 
   // const userName = "王小明";

@@ -4,7 +4,7 @@ import deleteTaskBtn from "../../images/deleteBtn.png";
 export default function TaskItem({
   id,
   content,
-  isDone,
+  completed,
   index,
   tasksState,
   setTasksState,
@@ -19,7 +19,7 @@ export default function TaskItem({
         <input
           className="appearance-none checkedStyle"
           type="checkbox"
-          defaultChecked={isDone}
+          defaultChecked={completed}
           onChange={() => handleDone(index, id, token)}
         />
         <input

@@ -8,6 +8,10 @@ export default function TasksList({ tasksState, setTasksState, token }) {
   if (tasksLength < 1) {
     return <EmptyTasks />;
   }
+  const headerValue = {
+    Authorization: token,
+    "Content-Type": "application/json",
+  };
   // let token = localStorage.getItem("userToken") || "";
   // console.log("TasksList", token);
 
@@ -23,17 +27,31 @@ export default function TasksList({ tasksState, setTasksState, token }) {
     console.log("Done");
   }
 
-  function handleDone(targetIndex, taskId) {
+  function handleDone(targetIndex, taskId, token) {
     //點擊目標的 index 如果和 tasksState 資料的 index 一樣，就把 isDone 翻轉並回傳 item
     //將改好的資料賦值給 newTasks，並執行 setTasksState 把資料修正
-    const newTasks = tasksState.map((item, index) => {
-      if (index === targetIndex) {
-        item.isDone = !item.isDone;
-        return item;
+    editTaskCompleted();
+
+    async function editTaskCompleted() {
+      const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}/toggle`;
+      const res = await fetch(apiUrl, {
+        method: "PATCH",
+        headers: headerValue,
+      });
+      const data = await res.json();
+      console.log(data);
+      const isSuccess = res.ok;
+      if (isSuccess) {
+        // const newTasks = tasksState.map((item, index) => {
+        //   if (index === targetIndex) {
+        //     item.completed_at = !item.isDone;
+        //     return item;
+        //   }
+        //   return item;
+        // });
+        // setTasksState(newTasks);
       }
-      return item;
-    });
-    setTasksState(newTasks);
+    }
   }
 
   function handleValue(targetIndex, taskId, newValue, token) {
@@ -43,7 +61,7 @@ export default function TasksList({ tasksState, setTasksState, token }) {
       },
     };
 
-    async function editTask() {
+    async function editTaskText() {
       const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}`;
       const res = await fetch(apiUrl, {
         method: "PUT",
@@ -65,7 +83,7 @@ export default function TasksList({ tasksState, setTasksState, token }) {
       }
     }
 
-    editTask();
+    editTaskText();
   }
 
   function handleDelete(targetIndex, taskId, token) {
@@ -130,7 +148,7 @@ export default function TasksList({ tasksState, setTasksState, token }) {
             index={index}
             id={item.id}
             content={item.content}
-            isDone={item.isDone}
+            completed={item.completed_at ? true : false}
             tasksState={tasksState}
             setTasksState={setTasksState}
             handleDone={handleDone}
