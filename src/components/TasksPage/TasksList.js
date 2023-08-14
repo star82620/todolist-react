@@ -8,6 +8,8 @@ export default function TasksList({ tasksState, setTasksState }) {
   // if (tasksLength < 1) {
   //   return <EmptyTasks />;
   // }
+  let token =
+    "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0OTU4Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNjkxOTczOTE0LCJleHAiOjE2OTMyNjk5MTQsImp0aSI6IjZhYzQ1NmQyLWQ5YTYtNDVhZC04YmFkLWJmOWQxMTEzNGUyOSJ9.psRWr2Sep7jE27qtLKX4GHKs4foL78LCI91Li1l95d0";
 
   function filterAll() {
     console.log("ALL");
@@ -45,13 +47,31 @@ export default function TasksList({ tasksState, setTasksState }) {
     setTasksState(newTasks);
   }
 
-  function handleDelete(targetIndex) {
+  function handleDelete(targetIndex, taskId) {
+    async function deleteTask() {
+      const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}`;
+      const res = await fetch(apiUrl, {
+        method: "DELETE",
+        headers: { Authorization: token },
+      });
+      const data = await res.json();
+      console.log(data);
+      const isSuccess = res.ok;
+      if (isSuccess) {
+        console.log("刪除了某某");
+      }
+    }
+
     const newTasks = tasksState.filter((item, index) => {
       return index !== targetIndex;
     });
     setTasksState(newTasks);
+
+    deleteTask();
+    // 成功刪除，但是畫面不會自動 re-render，所以還是要手動移除
   }
 
+  //刪除所有已完成的 task
   function deleteDone() {
     const newTasks = tasksState.filter((item) => {
       return item.isDone === false;
@@ -84,7 +104,7 @@ export default function TasksList({ tasksState, setTasksState }) {
       </div>
       {/* tasks list */}
       <div className="p-6 flex flex-col gap-4">
-        {/* {tasksState.map((item, index) => (
+        {tasksState.map((item, index) => (
           <TaskItem
             key={item.id}
             index={index}
@@ -97,7 +117,7 @@ export default function TasksList({ tasksState, setTasksState }) {
             handleValue={handleValue}
             handleDelete={handleDelete}
           />
-        ))} */}
+        ))}
         <div className="mt-6 pr-8 flex justify-between items-start">
           {/* <span>{tasksLength} 個待完成項目</span> */}
           <button className=" text-primary-gray" onClick={deleteDone}>

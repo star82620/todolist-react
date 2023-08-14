@@ -31,7 +31,7 @@ export default function TaskItem({
       <button
         className="ml-4 flex items-start invisible group-hover:visible"
         type="button"
-        onClick={() => handleDelete(index)}
+        onClick={() => handleDelete(index, id)}
       >
         <img className="" src={deleteTaskBtn} alt="deleteTaskBtn" />
       </button>

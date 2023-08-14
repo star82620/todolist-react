@@ -10,12 +10,15 @@ export default function NewTaskInput({ tasksState, setTasksState }) {
   function addTask() {
     if (!taskText) return alert("請輸入待辦事項");
     const task = {
-      id: tasksState.length + 1,
       content: taskText,
-      isDone: false,
     };
+    // {
+    //   "todo": {
+    //     "content": "qdqdwstring"
+    //   }
+    // }
 
-    setTasksState([...tasksState, task]);
+    // setTasksState([...tasksState, task]);
     //將新增的內容放在原本的陣列後面，等於是 push 效果
     setTaskText("");
   }

@@ -11,6 +11,8 @@ export default function TasksPage({ token }) {
   token =
     "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0OTU4Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNjkxOTczOTE0LCJleHAiOjE2OTMyNjk5MTQsImp0aSI6IjZhYzQ1NmQyLWQ5YTYtNDVhZC04YmFkLWJmOWQxMTEzNGUyOSJ9.psRWr2Sep7jE27qtLKX4GHKs4foL78LCI91Li1l95d0";
 
+  const [userName, setUserName] = useState("");
+
   async function getData() {
     try {
       let res = await fetch(apiUrl, {
@@ -22,6 +24,7 @@ export default function TasksPage({ token }) {
       console.log(data);
       if (isSuccess) {
         setTasksState(data.todos);
+        // 拿 API 撈到的資料去更新 tasksState
       } else {
         //畫面跳轉回 login page
       }
@@ -36,7 +39,6 @@ export default function TasksPage({ token }) {
 
   // const userName = "王小明";
   console.log("tasksState", tasksState);
-  const [userName, setUserName] = useState("");
 
   return (
     <div className="w-full h-screen bg-tasksPageBg flex flex-col items-center">
