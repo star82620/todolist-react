@@ -3,8 +3,9 @@ import EmptyTasks from "./EmptyTasks";
 
 // ToDo 列表
 export default function TasksList({ tasksState, setTasksState, token }) {
-  const tasksLength = tasksState.length || 0;
-  // console.log(tasksState);
+  const uncompletedTasks = tasksState.filter((item) => !item.completed_at);
+  const tasksLength = uncompletedTasks.length;
+  // console.log(tasksLength);
   if (tasksLength < 1) {
     return <EmptyTasks />;
   }
