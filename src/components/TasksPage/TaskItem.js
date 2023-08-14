@@ -1,9 +1,5 @@
 import deleteTaskBtn from "../../images/deleteBtn.png";
 
-// Update: edit
-// 修改 input 內容時，要這個內容同時傳回 data
-//
-
 // 單個 task
 export default function TaskItem({
   id,
