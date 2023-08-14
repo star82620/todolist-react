@@ -3,29 +3,25 @@ import NewTaskInput from "./NewTaskInput";
 import TasksList from "./TasksList";
 import Header from "./Header";
 
+export const token = localStorage.getItem("userToken") || "";
+const headerValue = {
+  Authorization: token,
+  "Content-Type": "application/json",
+};
+
 // TO-DO LIST PAGE
-export default function TasksPage({ token }) {
+export default function TasksPage() {
   const [tasksState, setTasksState] = useState([]);
-  const apiUrl = "https://todoo.5xcamp.us/todos";
-
-  token = localStorage.getItem("userToken") || "";
-  // console.log("index", token);
-  // token =
-  //   "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0OTU4Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNjkxOTczOTE0LCJleHAiOjE2OTMyNjk5MTQsImp0aSI6IjZhYzQ1NmQyLWQ5YTYtNDVhZC04YmFkLWJmOWQxMTEzNGUyOSJ9.psRWr2Sep7jE27qtLKX4GHKs4foL78LCI91Li1l95d0";
-
-  // localStorage.setItem("userToken", token);
-
-  const [userName, setUserName] = useState("");
-
   async function getData() {
+    const apiUrl = "https://todoo.5xcamp.us/todos";
     try {
       let res = await fetch(apiUrl, {
         method: "GET",
-        headers: { Authorization: token },
+        headers: headerValue,
       });
       let isSuccess = await res.ok;
       let data = await res.json(); //成功時是 todos，失敗時是 message
-      console.log(data);
+      console.log("getData", data);
       if (isSuccess) {
         setTasksState(data.todos);
         // 拿 API 撈到的資料去更新 tasksState
@@ -42,8 +38,9 @@ export default function TasksPage({ token }) {
     console.log("我有工作");
   }, []);
 
-  // const userName = "王小明";
-  console.log("tasksState", tasksState);
+  console.log("index-tasksState", tasksState);
+
+  const userName = "王小明";
 
   return (
     <div className="w-full h-screen bg-tasksPageBg flex flex-col items-center">
@@ -53,12 +50,12 @@ export default function TasksPage({ token }) {
         <NewTaskInput
           tasksState={tasksState}
           setTasksState={setTasksState}
-          token={token}
+          getData={getData}
         />
         <TasksList
           tasksState={tasksState}
           setTasksState={setTasksState}
-          token={token}
+          getData={getData}
         />
       </main>
     </div>
