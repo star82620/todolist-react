@@ -25,21 +25,36 @@ export default function TasksList({ tasksState, setTasksState, getData }) {
   // let token = localStorage.getItem("userToken") || "";
   // const [filterTag, setFilterTag] = useState("all");
 
-  function toggleTags(e, getData) {
-    getData();
-    let filterData = tasksState;
+  async function getData() {
+    const apiUrl = "https://todoo.5xcamp.us/todos";
+    try {
+      let res = await fetch(apiUrl, {
+        method: "GET",
+        headers: headerValue,
+      });
+      let data = await res.json(); //成功時是 todos，失敗時是 message
+      return data;
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
-    if (e.target.innerText === "全部") {
-      filterData = tasksState;
-    } else if (e.target.innerText === "待完成") {
-      filterData = tasksState.filter(
+  async function toggleTags(e, getData) {
+    let result = await getData();
+    let filterData;
+
+    if (e.target.innerText === "待完成") {
+      filterData = result.todos.filter(
         (item) => typeof item.completed_at !== "string"
       );
     } else if (e.target.innerText === "已完成") {
-      filterData = tasksState.filter(
+      filterData = result.todos.filter(
         (item) => typeof item.completed_at === "string"
       );
+    } else {
+      filterData = result.todos;
     }
+    console.log("filterData", filterData);
     setTasksState(filterData);
   }
 
