@@ -7,9 +7,13 @@ import Header from "./Header";
 export default function TasksPage({ token }) {
   const [tasksState, setTasksState] = useState([]);
   const apiUrl = "https://todoo.5xcamp.us/todos";
+
   // token = localStorage.getItem("userToken") || "";
+  // console.log("index", token);
   token =
     "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0OTU4Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNjkxOTczOTE0LCJleHAiOjE2OTMyNjk5MTQsImp0aSI6IjZhYzQ1NmQyLWQ5YTYtNDVhZC04YmFkLWJmOWQxMTEzNGUyOSJ9.psRWr2Sep7jE27qtLKX4GHKs4foL78LCI91Li1l95d0";
+
+  // localStorage.setItem("userToken", token);
 
   const [userName, setUserName] = useState("");
 
@@ -45,8 +49,16 @@ export default function TasksPage({ token }) {
       <Header userName={userName} />
 
       <main className="w-[500px] mt-6">
-        <NewTaskInput tasksState={tasksState} setTasksState={setTasksState} />
-        <TasksList tasksState={tasksState} setTasksState={setTasksState} />
+        <NewTaskInput
+          tasksState={tasksState}
+          setTasksState={setTasksState}
+          token={token}
+        />
+        <TasksList
+          tasksState={tasksState}
+          setTasksState={setTasksState}
+          token={token}
+        />
       </main>
     </div>
   );

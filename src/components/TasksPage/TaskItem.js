@@ -11,9 +11,10 @@ export default function TaskItem({
   handleDone,
   handleValue,
   handleDelete,
+  token,
 }) {
   return (
-    <div className="flex group" data-id={id}>
+    <div className="flex group" key={id}>
       <label className="w-full flex items-start grow pb-4  border-b">
         <input
           className="appearance-none checkedStyle"
@@ -31,7 +32,7 @@ export default function TaskItem({
       <button
         className="ml-4 flex items-start invisible group-hover:visible"
         type="button"
-        onClick={() => handleDelete(index, id)}
+        onClick={() => handleDelete(index, id, token)}
       >
         <img className="" src={deleteTaskBtn} alt="deleteTaskBtn" />
       </button>

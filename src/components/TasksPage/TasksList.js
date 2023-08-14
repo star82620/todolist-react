@@ -2,14 +2,14 @@ import TaskItem from "./TaskItem";
 import EmptyTasks from "./EmptyTasks";
 
 // ToDo 列表
-export default function TasksList({ tasksState, setTasksState }) {
+export default function TasksList({ tasksState, setTasksState, token }) {
   // const tasksLength = tasksState.length || 0;
   // console.log(tasksState);
   // if (tasksLength < 1) {
   //   return <EmptyTasks />;
   // }
-  let token =
-    "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0OTU4Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNjkxOTczOTE0LCJleHAiOjE2OTMyNjk5MTQsImp0aSI6IjZhYzQ1NmQyLWQ5YTYtNDVhZC04YmFkLWJmOWQxMTEzNGUyOSJ9.psRWr2Sep7jE27qtLKX4GHKs4foL78LCI91Li1l95d0";
+  // let token = localStorage.getItem("userToken") || "";
+  console.log("TasksList", token);
 
   function filterAll() {
     console.log("ALL");
@@ -47,7 +47,9 @@ export default function TasksList({ tasksState, setTasksState }) {
     setTasksState(newTasks);
   }
 
-  function handleDelete(targetIndex, taskId) {
+  function handleDelete(targetIndex, taskId, token) {
+    console.log(token);
+    console.log(taskId);
     async function deleteTask() {
       const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}`;
       const res = await fetch(apiUrl, {
@@ -58,14 +60,13 @@ export default function TasksList({ tasksState, setTasksState }) {
       console.log(data);
       const isSuccess = res.ok;
       if (isSuccess) {
-        console.log("刪除了某某");
+        console.log("刪除了");
+        const newTasks = tasksState.filter((item, index) => {
+          return index !== targetIndex;
+        });
+        setTasksState(newTasks);
       }
     }
-
-    const newTasks = tasksState.filter((item, index) => {
-      return index !== targetIndex;
-    });
-    setTasksState(newTasks);
 
     deleteTask();
     // 成功刪除，但是畫面不會自動 re-render，所以還是要手動移除
@@ -116,6 +117,7 @@ export default function TasksList({ tasksState, setTasksState }) {
             handleDone={handleDone}
             handleValue={handleValue}
             handleDelete={handleDelete}
+            token={token}
           />
         ))}
         <div className="mt-6 pr-8 flex justify-between items-start">
