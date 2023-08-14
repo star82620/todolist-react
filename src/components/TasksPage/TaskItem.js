@@ -20,13 +20,13 @@ export default function TaskItem({
           className="appearance-none checkedStyle"
           type="checkbox"
           defaultChecked={isDone}
-          onChange={() => handleDone(index)}
+          onChange={() => handleDone(index, id, token)}
         />
         <input
           className="grow ml-4 min-h-[14px] border-baseline-gray-500 focus:outline-none  focus:text-primary-gray focus:font-bold"
           type="text"
           defaultValue={content}
-          onChange={(e) => handleValue(index, e.target.value)}
+          onChange={(e) => handleValue(index, id, e.target.value, token)}
         />
       </label>
       <button

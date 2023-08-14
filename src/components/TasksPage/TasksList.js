@@ -3,13 +3,13 @@ import EmptyTasks from "./EmptyTasks";
 
 // ToDo 列表
 export default function TasksList({ tasksState, setTasksState, token }) {
-  // const tasksLength = tasksState.length || 0;
+  const tasksLength = tasksState.length || 0;
   // console.log(tasksState);
-  // if (tasksLength < 1) {
-  //   return <EmptyTasks />;
-  // }
+  if (tasksLength < 1) {
+    return <EmptyTasks />;
+  }
   // let token = localStorage.getItem("userToken") || "";
-  console.log("TasksList", token);
+  // console.log("TasksList", token);
 
   function filterAll() {
     console.log("ALL");
@@ -23,7 +23,7 @@ export default function TasksList({ tasksState, setTasksState, token }) {
     console.log("Done");
   }
 
-  function handleDone(targetIndex) {
+  function handleDone(targetIndex, taskId) {
     //點擊目標的 index 如果和 tasksState 資料的 index 一樣，就把 isDone 翻轉並回傳 item
     //將改好的資料賦值給 newTasks，並執行 setTasksState 把資料修正
     const newTasks = tasksState.map((item, index) => {
@@ -36,20 +36,39 @@ export default function TasksList({ tasksState, setTasksState, token }) {
     setTasksState(newTasks);
   }
 
-  function handleValue(targetIndex, newValue) {
-    const newTasks = tasksState.map((item, index) => {
-      if (index === targetIndex) {
-        item.content = newValue;
-        return item;
+  function handleValue(targetIndex, taskId, newValue, token) {
+    const bodyValue = {
+      todo: {
+        content: newValue,
+      },
+    };
+
+    async function editTask() {
+      const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}`;
+      const res = await fetch(apiUrl, {
+        method: "PUT",
+        headers: { Authorization: token, "Content-Type": "application/json" },
+        body: JSON.stringify(bodyValue),
+      });
+      const data = await res.json();
+      console.log(data);
+      const isSuccess = res.ok;
+      if (isSuccess) {
+        const newTasks = tasksState.map((item, index) => {
+          if (index === targetIndex) {
+            item.content = newValue;
+            return item;
+          }
+          return item;
+        });
+        setTasksState(newTasks);
       }
-      return item;
-    });
-    setTasksState(newTasks);
+    }
+
+    editTask();
   }
 
   function handleDelete(targetIndex, taskId, token) {
-    console.log(token);
-    console.log(taskId);
     async function deleteTask() {
       const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}`;
       const res = await fetch(apiUrl, {
@@ -121,7 +140,7 @@ export default function TasksList({ tasksState, setTasksState, token }) {
           />
         ))}
         <div className="mt-6 pr-8 flex justify-between items-start">
-          {/* <span>{tasksLength} 個待完成項目</span> */}
+          <span>{tasksLength} 個待完成項目</span>
           <button className=" text-primary-gray" onClick={deleteDone}>
             清除已完成項目
           </button>
