@@ -4,7 +4,7 @@ import EmptyTasks from "./EmptyTasks";
 import { token } from "./index";
 
 // ToDo 列表
-export default function TasksList({ tasksState, setTasksState }) {
+export default function TasksList({ tasksState, setTasksState, getData }) {
   //-------------- tasksLength ---------------
   // const uncompletedTasks = tasksState.filter((item) => !item.completed_at);
   // const [tasksLength, setTasksLeng] = useState(uncompletedTasks.length);
@@ -23,17 +23,24 @@ export default function TasksList({ tasksState, setTasksState }) {
     "Content-Type": "application/json",
   };
   // let token = localStorage.getItem("userToken") || "";
+  // const [filterTag, setFilterTag] = useState("all");
 
-  function filterAll() {
-    console.log("ALL");
-  }
+  function toggleTags(e, getData) {
+    getData();
+    let filterData = tasksState;
 
-  function filterDoing() {
-    console.log("Doing");
-  }
-
-  function filterDone() {
-    console.log("Done");
+    if (e.target.innerText === "全部") {
+      filterData = tasksState;
+    } else if (e.target.innerText === "待完成") {
+      filterData = tasksState.filter(
+        (item) => typeof item.completed_at !== "string"
+      );
+    } else if (e.target.innerText === "已完成") {
+      filterData = tasksState.filter(
+        (item) => typeof item.completed_at === "string"
+      );
+    }
+    setTasksState(filterData);
   }
 
   function handleDone(targetIndex, taskId) {
@@ -142,8 +149,6 @@ export default function TasksList({ tasksState, setTasksState }) {
       }
     }
 
-    // //map 跑 API。把 id 換掉
-    // //需要先知到 id
     const newTasks = tasksState.filter((item) => {
       return !item.completed_at;
     });
@@ -155,20 +160,20 @@ export default function TasksList({ tasksState, setTasksState }) {
       {/* tag */}
       <div className="w-full flex">
         <div
-          className="py-4 w-1/3 text-center font-bold text-[14px] border-b-2 border-baseline-gray-700 rounded-tl-[10px]"
-          onClick={filterAll}
+          className="py-4 w-1/3 text-center font-bold text-[14px] border-b-2 rounded-tl-[10px]"
+          onClick={(e) => toggleTags(e, getData)}
         >
           全部
         </div>
         <div
-          className="py-4 w-1/3 text-center font-bold text-[14px] text-primary-gray border-b-2 border-baseline-gray-400"
-          onClick={filterDoing}
+          className="py-4 w-1/3 text-center font-bold text-[14px] border-b-2"
+          onClick={(e) => toggleTags(e, getData)}
         >
           待完成
         </div>
         <div
-          className="py-4 w-1/3 text-center font-bold text-[14px] text-primary-gray border-b-2 border-baseline-gray-400 rounded-tr-[10px]"
-          onClick={filterDone}
+          className="py-4 w-1/3 text-center font-bold text-[14px] border-b-2 rounded-tr-[10px]"
+          onClick={(e) => toggleTags(e, getData)}
         >
           已完成
         </div>
