@@ -1,29 +1,41 @@
 import { useState } from "react";
 import createTaskBtn from "../../images/addTaskBtn.png";
+import getToken from "../../helper/token";
+import getTasksData from "../../helper/getTasksData";
 
 // 建立新的任務
-export default function NewTaskInput({ tasksState, setTasksState }) {
-  //Create： 按了新增 btn 就把資料放進 tasksData
-  //之後優化：在 input 中按鍵盤 enter 等於點擊 button 效果
-
+export default function NewTaskInput() {
   const [taskText, setTaskText] = useState("");
-  function addTask() {
+  const authHeader = getToken();
+
+  async function addTask() {
     if (!taskText) return alert("請輸入待辦事項");
     const task = {
-      id: tasksState.length + 1,
       content: taskText,
-      isDone: false,
+    };
+    const value = {
+      todo: task,
     };
 
-    setTasksState([...tasksState, task]);
-    //將新增的內容放在原本的陣列後面，等於是 push 效果
-    setTaskText("");
+    const apiUrl = `https://todoo.5xcamp.us/todos/`;
+    const res = await fetch(apiUrl, {
+      method: "POST",
+      headers: authHeader,
+      body: JSON.stringify(value),
+    });
+    const data = await res.json();
+    const isSuccess = await res.ok;
+    if (isSuccess) {
+      getTasksData();
+      setTaskText("");
+    }
+    return data;
   }
 
   return (
     <div className="p-1 pl-4 rounded-[10px] bg-white flex shadow-input-shadow">
       <input
-        className="grow placeholder:text-primary-gray placeholder:my-4"
+        className="grow pr-3 placeholder:text-primary-gray placeholder:my-4 focus:outline-none"
         type="text"
         value={taskText}
         onChange={(e) => setTaskText(e.target.value)}
