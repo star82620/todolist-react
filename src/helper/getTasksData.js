@@ -11,6 +11,6 @@ export default async function getTasksData() {
     const data = await res.json(); //成功時是 todos，失敗時是 message
     return data;
   } catch (err) {
-    console.log(err);
+    return err;
   }
 }

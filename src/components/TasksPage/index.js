@@ -3,6 +3,7 @@ import NewTaskInput from "./NewTaskInput";
 import TasksList from "./TasksList";
 import Header from "./Header";
 import getToken from "../../helper/token";
+import getTasksData from "../../helper/getTasksData";
 
 // TO-DO LIST PAGE
 export default function TasksPage() {
@@ -17,7 +18,6 @@ export default function TasksPage() {
       });
       const isSuccess = await res.ok;
       const data = await res.json(); //成功時是 todos，失敗時是 message
-      console.log("getData", data);
       if (isSuccess) {
         setTasksState(data.todos);
         // 拿 API 撈到的資料去更新 tasksState
@@ -25,13 +25,13 @@ export default function TasksPage() {
         //畫面跳轉回 login page
       }
     } catch (err) {
-      console.log(err);
+      return err;
     }
+    return data;
   }
 
   useEffect(() => {
-    getData();
-    console.log("我有工作");
+    getTasksData();
   }, []);
 
   console.log("index-tasksState", tasksState);

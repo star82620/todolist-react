@@ -51,7 +51,7 @@ export default function TasksList({ tasksState, setTasksState }) {
       headers: authHeader,
     });
     const data = await res.json();
-    console.log(data);
+    return data;
   }
 
   //修改 task 文字
@@ -91,7 +91,7 @@ export default function TasksList({ tasksState, setTasksState }) {
       headers: authHeader,
     });
     const data = await res.json();
-    console.log(data);
+    return data;
   }
 
   //刪除個別 task
