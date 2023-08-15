@@ -2,25 +2,21 @@ import { useEffect, useState } from "react";
 import NewTaskInput from "./NewTaskInput";
 import TasksList from "./TasksList";
 import Header from "./Header";
-
-export const token = localStorage.getItem("userToken") || "";
-const headerValue = {
-  Authorization: token,
-  "Content-Type": "application/json",
-};
+import getToken from "../../helper/token";
 
 // TO-DO LIST PAGE
 export default function TasksPage() {
   const [tasksState, setTasksState] = useState([]);
   async function getData() {
+    const authHeader = getToken();
     const apiUrl = "https://todoo.5xcamp.us/todos";
     try {
-      let res = await fetch(apiUrl, {
+      const res = await fetch(apiUrl, {
         method: "GET",
-        headers: headerValue,
+        headers: authHeader,
       });
-      let isSuccess = await res.ok;
-      let data = await res.json(); //成功時是 todos，失敗時是 message
+      const isSuccess = await res.ok;
+      const data = await res.json(); //成功時是 todos，失敗時是 message
       console.log("getData", data);
       if (isSuccess) {
         setTasksState(data.todos);

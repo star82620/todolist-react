@@ -1,34 +1,35 @@
 import { useState } from "react";
 import createTaskBtn from "../../images/addTaskBtn.png";
-import { token } from "./index";
+import getToken from "../../helper/token";
+import getTasksData from "../../helper/getTasksData";
 
 // 建立新的任務
-export default function NewTaskInput({ tasksState, setTasksState, getData }) {
+export default function NewTaskInput() {
   const [taskText, setTaskText] = useState("");
+  const authHeader = getToken();
 
   async function addTask() {
     if (!taskText) return alert("請輸入待辦事項");
     const task = {
       content: taskText,
     };
-    const bodyValue = {
+    const value = {
       todo: task,
     };
 
     const apiUrl = `https://todoo.5xcamp.us/todos/`;
     const res = await fetch(apiUrl, {
       method: "POST",
-      headers: { Authorization: token, "Content-Type": "application/json" },
-      body: JSON.stringify(bodyValue),
+      headers: authHeader,
+      body: JSON.stringify(value),
     });
     const data = await res.json();
-    console.log(data);
-    const isSuccess = res.ok;
+    const isSuccess = await res.ok;
     if (isSuccess) {
-      console.log("成功新增");
-      getData();
+      getTasksData();
       setTaskText("");
     }
+    return data;
   }
 
   return (

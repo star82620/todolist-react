@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import TaskItem from "./TaskItem";
 import EmptyTasks from "./EmptyTasks";
-import { token } from "./index";
+import getToken from "../../helper/token";
+import getTasksData from "../../helper/getTasksData";
 
 // ToDo 列表
-export default function TasksList({ tasksState, setTasksState, getData }) {
+export default function TasksList({ tasksState, setTasksState }) {
   //-------------- tasksLength ---------------
   // const uncompletedTasks = tasksState.filter((item) => !item.completed_at);
   // const [tasksLength, setTasksLeng] = useState(uncompletedTasks.length);
@@ -18,130 +19,94 @@ export default function TasksList({ tasksState, setTasksState, getData }) {
   // if (tasksLength < 1) {
   //   return <EmptyTasks />;
   // }
-  const headerValue = {
-    Authorization: token,
-    "Content-Type": "application/json",
-  };
-  // let token = localStorage.getItem("userToken") || "";
-  // const [filterTag, setFilterTag] = useState("all");
 
-  async function getData() {
-    const apiUrl = "https://todoo.5xcamp.us/todos";
-    try {
-      let res = await fetch(apiUrl, {
-        method: "GET",
-        headers: headerValue,
-      });
-      let data = await res.json(); //成功時是 todos，失敗時是 message
-      return data;
-    } catch (err) {
-      console.log(err);
-    }
-  }
+  const authHeader = getToken();
 
-  async function toggleTags(e, getData) {
-    let result = await getData();
+  //切換頁面 Tag
+  async function toggleTags(e) {
+    const res = await getTasksData();
     let filterData;
 
     if (e.target.innerText === "待完成") {
-      filterData = result.todos.filter(
+      filterData = res.todos.filter(
         (item) => typeof item.completed_at !== "string"
       );
     } else if (e.target.innerText === "已完成") {
-      filterData = result.todos.filter(
+      filterData = res.todos.filter(
         (item) => typeof item.completed_at === "string"
       );
     } else {
-      filterData = result.todos;
+      filterData = res.todos;
     }
-    console.log("filterData", filterData);
+
+    //將篩選好的內容 render 出來
     setTasksState(filterData);
   }
 
-  function handleDone(targetIndex, taskId) {
-    //點擊目標的 index 如果和 tasksState 資料的 index 一樣，就把 isDone 翻轉並回傳 item
-    //將改好的資料賦值給 newTasks，並執行 setTasksState 把資料修正
-    editTaskCompleted();
-
-    async function editTaskCompleted() {
-      const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}/toggle`;
-      const res = await fetch(apiUrl, {
-        method: "PATCH",
-        headers: headerValue,
-      });
-      const data = await res.json();
-      console.log(data);
-      const isSuccess = res.ok;
-      if (isSuccess) {
-        // const newTasks = tasksState.map((item, index) => {
-        //   if (index === targetIndex) {
-        //     item.completed_at = !item.isDone;
-        //     return item;
-        //   }
-        //   return item;
-        // });
-        // setTasksState(newTasks);
-      }
-    }
+  //改變 task 的完成狀態
+  async function handleCompleted(taskId) {
+    const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}/toggle`;
+    const res = await fetch(apiUrl, {
+      method: "PATCH",
+      headers: authHeader,
+    });
+    const data = await res.json();
+    console.log(data);
   }
 
-  function handleValue(targetIndex, taskId, newValue) {
+  //修改 task 文字
+  async function handleValue(targetIndex, taskId, newValue) {
     const bodyValue = {
       todo: {
         content: newValue,
       },
     };
 
-    async function editTaskText() {
-      const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}`;
-      const res = await fetch(apiUrl, {
-        method: "PUT",
-        headers: { Authorization: token, "Content-Type": "application/json" },
-        body: JSON.stringify(bodyValue),
-      });
-      const data = await res.json();
-      console.log(data);
-      const isSuccess = res.ok;
-      if (isSuccess) {
-        const newTasks = tasksState.map((item, index) => {
-          if (index === targetIndex) {
-            item.content = newValue;
-            return item;
-          }
+    const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}`;
+    const res = await fetch(apiUrl, {
+      method: "PUT",
+      headers: authHeader,
+      body: JSON.stringify(bodyValue),
+    });
+    const data = await res.json();
+    const isSuccess = await res.ok;
+    if (isSuccess) {
+      const newTasks = tasksState.map((item, index) => {
+        if (index === targetIndex) {
+          item.content = newValue;
           return item;
-        });
-        setTasksState(newTasks);
-      }
+        }
+        return item;
+      });
+      setTasksState(newTasks);
     }
-
-    editTaskText();
+    return data;
   }
 
-  function handleDelete(targetIndex, taskId) {
-    async function deleteTask() {
-      const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}`;
-      const res = await fetch(apiUrl, {
-        method: "DELETE",
-        headers: { Authorization: token },
-      });
-      const data = await res.json();
-      console.log(data);
-      const isSuccess = res.ok;
-      if (isSuccess) {
-        console.log("刪除了");
-        const newTasks = tasksState.filter((item, index) => {
-          return index !== targetIndex;
-        });
-        setTasksState(newTasks);
-      }
-    }
+  //刪除個別 task 的 API
+  async function deleteTask(taskId) {
+    const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}`;
+    const res = await fetch(apiUrl, {
+      method: "DELETE",
+      headers: authHeader,
+    });
+    const data = await res.json();
+    console.log(data);
+  }
 
-    deleteTask();
-    // 成功刪除，但是畫面不會自動 re-render，所以還是要手動移除
+  //刪除個別 task
+  function handleDelete(targetIndex, taskId) {
+    deleteTask(taskId);
+
+    const newTasks = tasksState.filter((item, index) => {
+      return index !== targetIndex;
+    });
+    setTasksState(newTasks);
   }
 
   //刪除所有已完成的 task
   async function deleteDone() {
+    //找出已完成的 task 並個別跑刪除操作
     const completedTasks = tasksState.filter((item) => {
       return item.completed_at;
     });
@@ -150,25 +115,14 @@ export default function TasksList({ tasksState, setTasksState, getData }) {
       deleteTask(item);
     });
 
-    async function deleteTask(taskId) {
-      const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}`;
-      const res = await fetch(apiUrl, {
-        method: "DELETE",
-        headers: { Authorization: token },
-      });
-      const data = await res.json();
-      console.log(data);
-      const isSuccess = res.ok;
-      if (isSuccess) {
-        console.log("刪除了");
-      }
-    }
-
+    //更新畫面
     const newTasks = tasksState.filter((item) => {
       return !item.completed_at;
     });
     setTasksState(newTasks);
   }
+
+  const tags = [{ tag: "全部" }];
 
   return (
     <div className="mt-4 rounded-[10px] bg-white text-[14px] shadow-input-shadow">
@@ -176,19 +130,19 @@ export default function TasksList({ tasksState, setTasksState, getData }) {
       <div className="w-full flex">
         <div
           className="py-4 w-1/3 text-center font-bold text-[14px] border-b-2 rounded-tl-[10px]"
-          onClick={(e) => toggleTags(e, getData)}
+          onClick={(e) => toggleTags(e)}
         >
           全部
         </div>
         <div
           className="py-4 w-1/3 text-center font-bold text-[14px] border-b-2"
-          onClick={(e) => toggleTags(e, getData)}
+          onClick={(e) => toggleTags(e)}
         >
           待完成
         </div>
         <div
           className="py-4 w-1/3 text-center font-bold text-[14px] border-b-2 rounded-tr-[10px]"
-          onClick={(e) => toggleTags(e, getData)}
+          onClick={(e) => toggleTags(e)}
         >
           已完成
         </div>
@@ -204,7 +158,7 @@ export default function TasksList({ tasksState, setTasksState, getData }) {
             completed={item.completed_at ? true : false}
             tasksState={tasksState}
             setTasksState={setTasksState}
-            handleDone={handleDone}
+            handleCompleted={handleCompleted}
             handleValue={handleValue}
             handleDelete={handleDelete}
           />

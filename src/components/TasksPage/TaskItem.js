@@ -9,7 +9,7 @@ export default function TaskItem({
   index,
   tasksState,
   setTasksState,
-  handleDone,
+  handleCompleted,
   handleValue,
   handleDelete,
 }) {
@@ -20,7 +20,7 @@ export default function TaskItem({
           className="appearance-none checkedStyle"
           type="checkbox"
           defaultChecked={completed}
-          onChange={() => handleDone(index, id)}
+          onChange={() => handleCompleted(id)}
         />
         <input
           className="grow ml-4 min-h-[14px] border-baseline-gray-500 focus:outline-none  focus:text-primary-gray focus:font-bold"
