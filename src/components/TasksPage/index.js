@@ -9,6 +9,7 @@ import getTasksData from "../../helper/getTasksData";
 export default function TasksPage() {
   const [tasksState, setTasksState] = useState([]);
   async function getData() {
+    //這可能要改用 getTasksData
     const authHeader = getToken();
     const apiUrl = "https://todoo.5xcamp.us/todos";
     try {
@@ -20,6 +21,7 @@ export default function TasksPage() {
       const data = await res.json(); //成功時是 todos，失敗時是 message
       if (isSuccess) {
         setTasksState(data.todos);
+        return data;
         // 拿 API 撈到的資料去更新 tasksState
       } else {
         //畫面跳轉回 login page
@@ -27,11 +29,10 @@ export default function TasksPage() {
     } catch (err) {
       return err;
     }
-    return data;
   }
 
   useEffect(() => {
-    getTasksData();
+    getData();
   }, []);
 
   console.log("index-tasksState", tasksState);
