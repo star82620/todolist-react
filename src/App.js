@@ -18,6 +18,7 @@ function App() {
       </Route>
     )
   );
+
   return (
     <div className="App">
       <RouterProvider router={router} />

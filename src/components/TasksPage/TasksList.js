@@ -7,18 +7,19 @@ import getTasksData from "../../helper/getTasksData";
 // ToDo 列表
 export default function TasksList({ tasksState, setTasksState }) {
   //-------------- tasksLength ---------------
-  // const uncompletedTasks = tasksState.filter((item) => !item.completed_at);
-  // const [tasksLength, setTasksLeng] = useState(uncompletedTasks.length);
+  const uncompletedTasks = tasksState.filter((item) => !item.completed_at);
+  const [tasksLength, setTasksLeng] = useState(uncompletedTasks.length);
 
-  // useEffect(() => {
-  //   setTasksLeng(uncompletedTasks.length);
-  //   console.log("leng工作");
-  // }, [tasksState]);
+  useEffect(() => {
+    setTasksLeng(uncompletedTasks.length);
+    console.log("d");
+  }, [tasksState]);
   //--------------- 需要重新整理 ---------------
+  console.log("leng", tasksLength);
 
-  // if (tasksLength < 1) {
-  //   return <EmptyTasks />;
-  // }
+  if (tasksLength < 1) {
+    return <EmptyTasks />;
+  }
 
   const authHeader = getToken();
 
@@ -149,22 +150,24 @@ export default function TasksList({ tasksState, setTasksState }) {
       </div>
       {/* tasks list */}
       <div className="p-6 flex flex-col gap-4">
-        {tasksState.map((item, index) => (
-          <TaskItem
-            key={item.id}
-            index={index}
-            id={item.id}
-            content={item.content}
-            completed={item.completed_at ? true : false}
-            tasksState={tasksState}
-            setTasksState={setTasksState}
-            handleCompleted={handleCompleted}
-            handleValue={handleValue}
-            handleDelete={handleDelete}
-          />
-        ))}
+        {tasksState
+          ? tasksState.map((item, index) => (
+              <TaskItem
+                key={item.id}
+                index={index}
+                id={item.id}
+                content={item.content}
+                completed={item.completed_at ? true : false}
+                tasksState={tasksState}
+                setTasksState={setTasksState}
+                handleCompleted={handleCompleted}
+                handleValue={handleValue}
+                handleDelete={handleDelete}
+              />
+            ))
+          : console.log("我死了")}
         <div className="mt-6 pr-8 flex justify-between items-start">
-          {/* <span>{tasksLength} 個待完成項目</span> */}
+          <span>{tasksLength} 個待完成項目</span>
           <button className=" text-primary-gray" onClick={deleteDone}>
             清除已完成項目
           </button>

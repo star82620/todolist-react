@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import TextInput from "../TextInput";
 import Cover from "../Cover";
-import getToken from "../../helper/token";
 
 export default function Login() {
   const [loginState, setLoginState] = useState({ email: "", password: "" });
@@ -14,6 +13,8 @@ export default function Login() {
     loginState[e.target.name] = e.target.value;
     setLoginState(loginState);
   }
+
+  const navigate = useNavigate();
 
   async function submitLoginData() {
     console.log(postData);
@@ -28,10 +29,10 @@ export default function Login() {
         const headers = res.headers;
         const token = headers.get("authorization");
         localStorage.setItem("userToken", token);
+        navigate("/tasks");
       } else {
         alert("登入失敗，請重試");
       }
-
       const data = await res.json();
       return data;
     } catch (err) {

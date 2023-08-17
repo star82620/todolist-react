@@ -8,7 +8,9 @@ export default async function getTasksData() {
       method: "GET",
       headers: authHeader,
     });
+    console.log(authHeader);
     const data = await res.json(); //成功時是 todos，失敗時是 message
+    console.log(data);
     return data;
   } catch (err) {
     return err;
