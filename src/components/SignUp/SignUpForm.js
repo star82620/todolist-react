@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import TextInput from "../TextInput";
 
 export default function SignUpForm({ signUpState, setSignUpState }) {
@@ -11,6 +12,7 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
   }
 
   function submitSignUp() {
+    console.log(postData);
     fetch(apiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -19,7 +21,7 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
       .then((res) => {
         let headers = res.headers;
         let token = headers.get("authorization");
-        token = token.replace("Bearer ", "");
+
         localStorage.setItem("userToken", token);
 
         return res.json();
@@ -75,7 +77,9 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
       >
         註冊帳號
       </button>
-      <a className="mt-6 block">登入</a>
+      <Link to="/" className="mt-6 block">
+        登入
+      </Link>
     </form>
   );
 }
