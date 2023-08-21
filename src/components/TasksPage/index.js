@@ -3,6 +3,7 @@ import NewTaskInput from "./NewTaskInput";
 import TasksList from "./TasksList";
 import Header from "./Header";
 import getTasksData from "../../helper/getTasksData";
+import EmptyTasks from "./EmptyTasks";
 
 // TO-DO LIST PAGE
 export default function TasksPage() {
@@ -24,7 +25,7 @@ export default function TasksPage() {
   }, []);
 
   console.log("index-tasksState", tasksState);
-
+  const isEmpty = tasksState.length === 0 ? true : false;
   const userName = "王小明";
 
   return (
@@ -33,7 +34,11 @@ export default function TasksPage() {
 
       <main className="w-[500px] mt-6">
         <NewTaskInput tasksState={tasksState} setTasksState={setTasksState} />
-        <TasksList tasksState={tasksState} setTasksState={setTasksState} />
+        {isEmpty ? (
+          <EmptyTasks />
+        ) : (
+          <TasksList tasksState={tasksState} setTasksState={setTasksState} />
+        )}
       </main>
     </div>
   );

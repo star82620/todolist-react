@@ -10,15 +10,11 @@ export default function TasksList({ tasksState, setTasksState }) {
   const uncompletedTasks = tasksState.filter((item) => !item.completed_at);
   const [tasksLength, setTasksLeng] = useState(uncompletedTasks.length);
 
-  useEffect(() => {
-    setTasksLeng(uncompletedTasks.length);
-  }, [tasksState]);
+  // useEffect(() => {
+  //   setTasksLeng(uncompletedTasks.length);
+  // }, [tasksState]);
   //--------------- 需要重新整理 ---------------
   // console.log("leng", tasksLength);
-
-  if (tasksLength < 1) {
-    return <EmptyTasks />;
-  }
 
   const authHeader = getToken();
 
