@@ -8,12 +8,13 @@ import getTasksData from "../../helper/getTasksData";
 export default function TasksPage() {
   const [tasksState, setTasksState] = useState([]);
 
+  //一進畫面就 render
   useEffect(() => {
     const res = getTasksData();
     res
       .then((data) => {
+        // 如果 GET 成功，得到 todos 列表
         if (data.todos) {
-          console.log(data);
           setTasksState(data.todos);
         } else {
           //跳轉到 login
@@ -31,7 +32,7 @@ export default function TasksPage() {
       <Header userName={userName} />
 
       <main className="w-[500px] mt-6">
-        <NewTaskInput />
+        <NewTaskInput tasksState={tasksState} setTasksState={setTasksState} />
         <TasksList tasksState={tasksState} setTasksState={setTasksState} />
       </main>
     </div>

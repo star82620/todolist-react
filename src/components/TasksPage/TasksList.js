@@ -12,10 +12,9 @@ export default function TasksList({ tasksState, setTasksState }) {
 
   useEffect(() => {
     setTasksLeng(uncompletedTasks.length);
-    console.log("d");
   }, [tasksState]);
   //--------------- 需要重新整理 ---------------
-  console.log("leng", tasksLength);
+  // console.log("leng", tasksLength);
 
   if (tasksLength < 1) {
     return <EmptyTasks />;

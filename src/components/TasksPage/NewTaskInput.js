@@ -4,30 +4,33 @@ import getToken from "../../helper/token";
 import getTasksData from "../../helper/getTasksData";
 
 // 建立新的任務
-export default function NewTaskInput() {
+export default function NewTaskInput({ tasksState, setTasksState }) {
   const [taskText, setTaskText] = useState("");
-  const authHeader = getToken();
 
   async function addTask() {
     if (!taskText) return alert("請輸入待辦事項");
-    const task = {
-      content: taskText,
-    };
-    const value = {
-      todo: task,
+    const body = {
+      todo: {
+        content: taskText,
+      },
     };
 
     const apiUrl = `https://todoo.5xcamp.us/todos/`;
+    const authHeader = await getToken();
     const res = await fetch(apiUrl, {
       method: "POST",
       headers: authHeader,
-      body: JSON.stringify(value),
+      body: JSON.stringify(body),
     });
     const data = await res.json();
     const isSuccess = await res.ok;
+
     if (isSuccess) {
-      getTasksData();
+      const data = await getTasksData();
+      setTasksState(data.todos);
       setTaskText("");
+    } else {
+      alert("發生異常，請重試一次");
     }
     return data;
   }
