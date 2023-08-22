@@ -152,7 +152,7 @@ export default function TasksList({
       </div>
       {/* tasks list */}
       <div className="p-6 flex flex-col gap-4">
-        {tasksState.length !== 0 //不是渲染用的不等於零，是基礎的API不等於零
+        {renderState.length !== 0 //不是渲染用的不等於零，是基礎的API不等於零
           ? renderState.map((item, index) => (
               <TaskItem
                 key={item.id}
@@ -167,7 +167,7 @@ export default function TasksList({
                 handleDelete={handleDelete}
               />
             ))
-          : "項目為空"}
+          : `項目為空`}
         <div className="mt-6 pr-8 flex justify-between items-start">
           <span>{uncompletedLength} 個待完成項目</span>
           <button className=" text-primary-gray" onClick={deleteDone}>
