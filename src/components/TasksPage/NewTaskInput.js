@@ -28,10 +28,10 @@ export default function NewTaskInput({
       body: JSON.stringify(body),
     });
     const data = await res.json();
-    const isSuccess = await res.ok;
 
-    if (isSuccess) {
+    if (await res.ok) {
       const data = await getTasksData();
+      setTasksState(data.todos);
       setRenderState(data.todos);
       setTaskText("");
     } else {

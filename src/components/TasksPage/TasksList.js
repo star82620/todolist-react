@@ -26,7 +26,9 @@ export default function TasksList({
 
   const authHeader = getToken();
 
-  //切換頁面 Tag
+  //切換頁面 Tag：直接跑一次 API
+  // （直接跑 API 跟用 tasksState 有什麼差別？）
+  // （用 tasksState 可以不用一直 GET todos）
   async function toggleTags(e) {
     const res = await getTasksData();
     let filterData;
@@ -56,7 +58,8 @@ export default function TasksList({
       headers: authHeader,
     });
     const data = await res.json();
-    console.log(data);
+    console.log(data); //
+
     const index = tasksState.findIndex((item) => {
       return item.id === taskId;
     });
@@ -64,12 +67,13 @@ export default function TasksList({
     newAry[index] = data;
     setTasksState(newAry);
     return data;
-    // 想在這裡給他更新 tasksState，但考慮到一直 GET API 好像不太好
+    // 想在這裡給他更新 tasksState，但考慮到一直 GET API 好像不太好，
+    // 改成把我得到的回傳資料塞給 tasksState，單方面更新 data
   }
 
   //修改 task 文字
   async function handleValue(targetIndex, taskId, newValue) {
-    const bodyValue = {
+    const body = {
       todo: {
         content: newValue,
       },
@@ -79,18 +83,18 @@ export default function TasksList({
     const res = await fetch(apiUrl, {
       method: "PUT",
       headers: authHeader,
-      body: JSON.stringify(bodyValue),
+      body: JSON.stringify(body),
     });
     const data = await res.json();
+    console.log("l", data);
     if (await res.ok) {
-      const newTasks = tasksState.map((item, index) => {
-        if (index === targetIndex) {
-          item.content = newValue;
-          return item;
-        }
-        return item;
+      //更新本地的 tasksState
+      const index = tasksState.findIndex((item) => {
+        return item.id === taskId;
       });
-      setTasksState(newTasks);
+      const newAry = [...tasksState];
+      newAry[index].content = data.content;
+      setTasksState(newAry);
     }
     return data;
   }
@@ -102,18 +106,24 @@ export default function TasksList({
       method: "DELETE",
       headers: authHeader,
     });
-    const data = await res.json();
-    return data;
+    return res;
   }
 
   //刪除個別 task
-  function handleDelete(targetIndex, taskId) {
-    deleteTask(taskId);
+  async function handleDelete(targetIndex, taskId) {
+    const res = await deleteTask(taskId);
+    const data = await res.json();
 
-    const newTasks = tasksState.filter((item, index) => {
-      return index !== targetIndex;
-    });
-    setTasksState(newTasks);
+    //更新畫面渲染、本地的 tasksState
+    if (await res.ok) {
+      const index = tasksState.findIndex((item) => {
+        return item.id === taskId;
+      });
+      const newAry = [...tasksState];
+      newAry.splice(index, 1);
+      setTasksState(newAry);
+      setRenderState(newAry);
+    }
   }
 
   //刪除所有已完成的 task
