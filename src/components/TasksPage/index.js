@@ -20,7 +20,7 @@ export default function TasksPage() {
         // 如果 GET 成功，得到 todos 列表
         if (data.todos) {
           setTasksState(data.todos);
-          setRenderState(data.todos); //在這裡不能直接拿TasksState，因為他還沒有被更新
+          setRenderState(data.todos); //在這裡不能直接拿 TasksState，因為他還沒有被更新
         } else {
           //跳轉到 login
         }

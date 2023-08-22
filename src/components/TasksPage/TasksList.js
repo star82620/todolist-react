@@ -48,6 +48,7 @@ export default function TasksList({
     //將篩選好的內容 render 出來
     console.log("tag", e.target.innerText, filterData);
     setRenderState(filterData);
+    // 現在的問題是，我在這個 tag 中做事情，他不會動作
   }
 
   //改變 task 的完成狀態
@@ -63,12 +64,10 @@ export default function TasksList({
     const index = tasksState.findIndex((item) => {
       return item.id === taskId;
     });
-    const newAry = [...tasksState];
-    newAry[index] = data;
-    setTasksState(newAry);
+    const newTasks = [...tasksState];
+    newTasks[index] = data;
+    setTasksState(newTasks);
     return data;
-    // 想在這裡給他更新 tasksState，但考慮到一直 GET API 好像不太好，
-    // 改成把我得到的回傳資料塞給 tasksState，單方面更新 data
   }
 
   //修改 task 文字
@@ -92,21 +91,25 @@ export default function TasksList({
       const index = tasksState.findIndex((item) => {
         return item.id === taskId;
       });
-      const newAry = [...tasksState];
-      newAry[index].content = data.content;
-      setTasksState(newAry);
+      const newTasks = [...tasksState];
+      newTasks[index].content = data.content;
+      setTasksState(newTasks);
     }
     return data;
   }
 
   //刪除個別 task 的 API
   async function deleteTask(taskId) {
-    const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}`;
-    const res = await fetch(apiUrl, {
-      method: "DELETE",
-      headers: authHeader,
-    });
-    return res;
+    try {
+      const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}`;
+      const res = await fetch(apiUrl, {
+        method: "DELETE",
+        headers: authHeader,
+      });
+      return res;
+    } catch {
+      console.log("ohno");
+    }
   }
 
   //刪除個別 task
@@ -119,15 +122,18 @@ export default function TasksList({
       const index = tasksState.findIndex((item) => {
         return item.id === taskId;
       });
-      const newAry = [...tasksState];
-      newAry.splice(index, 1);
-      setTasksState(newAry);
-      setRenderState(newAry);
+      const newTasks = [...tasksState];
+      newTasks.splice(index, 1);
+      setTasksState(newTasks);
+      setRenderState(newTasks);
+    } else {
+      alert(`出現異常，請重試 ${data}`);
     }
   }
 
   //刪除所有已完成的 task
   async function deleteDone() {
+    const newTasks = [...tasksState];
     //找出已完成的 task 並個別跑刪除操作
     const completedTasks = tasksState.filter((item) => {
       return item.completed_at;
@@ -135,13 +141,17 @@ export default function TasksList({
     const completedTasksId = completedTasks.map((item) => item.id);
     completedTasksId.map((item) => {
       deleteTask(item);
+      newTasks.splice(item, 1);
     });
 
-    //更新畫面
-    const newTasks = tasksState.filter((item) => {
-      return !item.completed_at;
-    });
     setTasksState(newTasks);
+    //更新畫面
+    // 看目前的 tag 是什麼，如果是 completed 就 setRenderState([])
+    // if(tag 是 all or Uncompleted){
+    //  setRenderState(newTasks);
+    // } else {
+    //  setRenderState([]);
+    // }
   }
 
   return (
