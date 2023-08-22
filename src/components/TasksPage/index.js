@@ -7,6 +7,9 @@ import EmptyTasks from "./EmptyTasks";
 
 // TO-DO LIST PAGE
 export default function TasksPage() {
+  //渲染用狀態
+  const [renderState, setRenderState] = useState([]);
+  //從 API 取得的資料
   const [tasksState, setTasksState] = useState([]);
 
   //一進畫面就 render
@@ -17,6 +20,7 @@ export default function TasksPage() {
         // 如果 GET 成功，得到 todos 列表
         if (data.todos) {
           setTasksState(data.todos);
+          setRenderState(data.todos);
         } else {
           //跳轉到 login
         }
@@ -24,7 +28,7 @@ export default function TasksPage() {
       .catch((err) => console.log(err));
   }, []);
 
-  console.log("index-tasksState", tasksState);
+  console.log("index-renderState", renderState);
   const isEmpty = tasksState.length === 0 ? true : false;
   const userName = "王小明";
 
@@ -33,11 +37,21 @@ export default function TasksPage() {
       <Header userName={userName} />
 
       <main className="w-[500px] mt-6">
-        <NewTaskInput tasksState={tasksState} setTasksState={setTasksState} />
+        <NewTaskInput
+          renderState={renderState}
+          setRenderState={setRenderState}
+          tasksState={tasksState}
+          setTasksState={setTasksState}
+        />
         {isEmpty ? (
           <EmptyTasks />
         ) : (
-          <TasksList tasksState={tasksState} setTasksState={setTasksState} />
+          <TasksList
+            renderState={renderState}
+            setRenderState={setRenderState}
+            tasksState={tasksState}
+            setTasksState={setTasksState}
+          />
         )}
       </main>
     </div>

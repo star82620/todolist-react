@@ -1,20 +1,28 @@
 import { useState, useEffect } from "react";
 import TaskItem from "./TaskItem";
-import EmptyTasks from "./EmptyTasks";
 import getToken from "../../helper/token";
 import getTasksData from "../../helper/getTasksData";
 
 // ToDo 列表
-export default function TasksList({ tasksState, setTasksState }) {
-  //-------------- tasksLength ---------------
+export default function TasksList({
+  tasksState,
+  setTasksState,
+  renderState,
+  setRenderState,
+}) {
+  //------------- 未完成任務數量 ---------------
   const uncompletedTasks = tasksState.filter((item) => !item.completed_at);
-  const [tasksLength, setTasksLeng] = useState(uncompletedTasks.length);
+  const [uncompletedLength, setUncompletedLength] = useState(
+    uncompletedTasks.length
+  );
 
-  // useEffect(() => {
-  //   setTasksLeng(uncompletedTasks.length);
-  // }, [tasksState]);
-  //--------------- 需要重新整理 ---------------
-  // console.log("leng", tasksLength);
+  //如果 tasksState 有更新，就更新未完成任務數量
+  useEffect(() => {
+    setUncompletedLength(uncompletedTasks.length);
+    console.log("我更新了！", uncompletedTasks.length);
+  }, [tasksState]);
+
+  //------------------------------
 
   const authHeader = getToken();
 
@@ -36,7 +44,8 @@ export default function TasksList({ tasksState, setTasksState }) {
     }
 
     //將篩選好的內容 render 出來
-    setTasksState(filterData);
+    console.log("tag", e.target.innerText, filterData);
+    setRenderState(filterData);
   }
 
   //改變 task 的完成狀態
@@ -47,6 +56,7 @@ export default function TasksList({ tasksState, setTasksState }) {
       headers: authHeader,
     });
     const data = await res.json();
+    console.log(data);
     return data;
   }
 
@@ -65,8 +75,7 @@ export default function TasksList({ tasksState, setTasksState }) {
       body: JSON.stringify(bodyValue),
     });
     const data = await res.json();
-    const isSuccess = await res.ok;
-    if (isSuccess) {
+    if (await res.ok) {
       const newTasks = tasksState.map((item, index) => {
         if (index === targetIndex) {
           item.content = newValue;
@@ -118,8 +127,6 @@ export default function TasksList({ tasksState, setTasksState }) {
     setTasksState(newTasks);
   }
 
-  const tags = [{ tag: "全部" }];
-
   return (
     <div className="mt-4 rounded-[10px] bg-white text-[14px] shadow-input-shadow">
       {/* tag */}
@@ -145,8 +152,8 @@ export default function TasksList({ tasksState, setTasksState }) {
       </div>
       {/* tasks list */}
       <div className="p-6 flex flex-col gap-4">
-        {tasksState
-          ? tasksState.map((item, index) => (
+        {tasksState.length !== 0 //不是渲染用的不等於零，是基礎的API不等於零
+          ? renderState.map((item, index) => (
               <TaskItem
                 key={item.id}
                 index={index}
@@ -160,9 +167,9 @@ export default function TasksList({ tasksState, setTasksState }) {
                 handleDelete={handleDelete}
               />
             ))
-          : console.log("我死了")}
+          : "項目為空"}
         <div className="mt-6 pr-8 flex justify-between items-start">
-          <span>{tasksLength} 個待完成項目</span>
+          <span>{uncompletedLength} 個待完成項目</span>
           <button className=" text-primary-gray" onClick={deleteDone}>
             清除已完成項目
           </button>
