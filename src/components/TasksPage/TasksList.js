@@ -57,7 +57,14 @@ export default function TasksList({
     });
     const data = await res.json();
     console.log(data);
+    const index = tasksState.findIndex((item) => {
+      return item.id === taskId;
+    });
+    const newAry = [...tasksState];
+    newAry[index] = data;
+    setTasksState(newAry);
     return data;
+    // 想在這裡給他更新 tasksState，但考慮到一直 GET API 好像不太好
   }
 
   //修改 task 文字

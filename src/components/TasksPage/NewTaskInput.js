@@ -4,7 +4,12 @@ import getToken from "../../helper/token";
 import getTasksData from "../../helper/getTasksData";
 
 // 建立新的任務
-export default function NewTaskInput({ tasksState, setTasksState }) {
+export default function NewTaskInput({
+  tasksState,
+  setTasksState,
+  renderState,
+  setRenderState,
+}) {
   const [taskText, setTaskText] = useState("");
 
   async function addTask() {
@@ -27,7 +32,7 @@ export default function NewTaskInput({ tasksState, setTasksState }) {
 
     if (isSuccess) {
       const data = await getTasksData();
-      setTasksState(data.todos);
+      setRenderState(data.todos);
       setTaskText("");
     } else {
       alert("發生異常，請重試一次");

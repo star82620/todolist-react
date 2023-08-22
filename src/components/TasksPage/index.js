@@ -7,10 +7,10 @@ import EmptyTasks from "./EmptyTasks";
 
 // TO-DO LIST PAGE
 export default function TasksPage() {
-  //渲染用狀態
-  const [renderState, setRenderState] = useState([]);
   //從 API 取得的資料
   const [tasksState, setTasksState] = useState([]);
+  //渲染用狀態
+  const [renderState, setRenderState] = useState(tasksState);
 
   //一進畫面就 render
   useEffect(() => {
@@ -20,7 +20,7 @@ export default function TasksPage() {
         // 如果 GET 成功，得到 todos 列表
         if (data.todos) {
           setTasksState(data.todos);
-          setRenderState(data.todos);
+          setRenderState(data.todos); //在這裡不能直接拿TasksState，因為他還沒有被更新
         } else {
           //跳轉到 login
         }
