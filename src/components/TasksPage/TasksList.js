@@ -26,35 +26,6 @@ export default function TasksList({
 
   const authHeader = getToken();
 
-  //切換頁面 Tag：直接跑一次 API
-  // （直接跑 API 跟用 tasksState 有什麼差別？）
-  // （用 tasksState 可以不用一直 GET todos）
-  async function toggleTags(e) {
-    const res = await getTasksData();
-    let filterData;
-
-    if (e.target.innerText === "待完成") {
-      filterData = res.todos.filter(
-        (item) => typeof item.completed_at !== "string"
-      );
-    } else if (e.target.innerText === "已完成") {
-      filterData = res.todos.filter(
-        (item) => typeof item.completed_at === "string"
-      );
-    } else {
-      filterData = res.todos;
-    }
-
-    //將篩選好的內容 render 出來
-    console.log("tag", e.target.innerText, filterData);
-    setRenderState(filterData);
-    // 現在的問題是，我在這個 tag 中做事情，他不會動作
-  }
-
-  // async function toggleTags(e) {
-  //   // if()
-  // }
-
   //改變 task 的完成狀態
   async function handleCompleted(taskId) {
     const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}/toggle`;
@@ -151,25 +122,86 @@ export default function TasksList({
     });
 
     setTasksState(newTasks);
-    //更新畫面
-    // 看目前的 tag 是什麼，如果是 completed 就 setRenderState([])
-    // if(tag 是 all or Uncompleted){
-    //  setRenderState(newTasks);
-    // } else {
-    //  setRenderState([]);
-    // }
   }
 
-  const tags = [
-    { id: "all", title: "全部", active: true },
-    { id: "uncompleted", title: "待完成", active: false },
-    { id: "completed", title: "已完成", active: false },
-  ];
+  //---- tag ----
   const tagStyle =
     "py-4 w-1/3 text-center font-bold text-[14px] text-primary-gray border-b-2 border-baseline-gray-400";
   const activeTagStyle =
     "py-4 w-1/3 text-center font-bold text-[14px] border-b-2 border-baseline-gray-700 text-black";
-  // 如果是 active 的，就給他 activeStyle
+
+  const [activeTag, setActiveTag] = useState("all");
+  console.log(activeTag);
+
+  const tags = [
+    { key: "all", title: "全部" },
+    { key: "uncompleted", title: "待完成" },
+    { key: "completed", title: "已完成" },
+  ];
+
+  function toggleTags(e) {
+    setActiveTag(e.target.dataset.key);
+  }
+
+  const all = (() =>
+    tasksState.map((item, index) => (
+      <TaskItem
+        key={item.id}
+        index={index}
+        id={item.id}
+        content={item.content}
+        completed={item.completed_at ? true : false}
+        tasksState={tasksState}
+        setTasksState={setTasksState}
+        handleCompleted={handleCompleted}
+        handleValue={handleValue}
+        handleDelete={handleDelete}
+      />
+    )))();
+
+  const uncompleted = (() =>
+    tasksState.map((item, index) => {
+      if (item.completed_at !== null) return null;
+      return (
+        <TaskItem
+          key={item.id}
+          index={index}
+          id={item.id}
+          content={item.content}
+          completed={item.completed_at ? true : false}
+          tasksState={tasksState}
+          setTasksState={setTasksState}
+          handleCompleted={handleCompleted}
+          handleValue={handleValue}
+          handleDelete={handleDelete}
+        />
+      );
+    }))();
+
+  const completed = (() =>
+    tasksState.map((item, index) => {
+      if (item.completed_at === null) return null;
+      return (
+        <TaskItem
+          key={item.id}
+          index={index}
+          id={item.id}
+          content={item.content}
+          completed={item.completed_at ? true : false}
+          tasksState={tasksState}
+          setTasksState={setTasksState}
+          handleCompleted={handleCompleted}
+          handleValue={handleValue}
+          handleDelete={handleDelete}
+        />
+      );
+    }))();
+
+  const isListEmpty = renderState.length === 0; //不是渲染用的不等於零，是基礎的API不等於零
+
+  const isAll = activeTag === "all";
+  const isUncompleted = activeTag === "uncompleted";
+  const isCompleted = activeTag === "completed";
 
   return (
     <div className="mt-4 rounded-[10px] bg-white text-[14px] shadow-input-shadow">
@@ -178,51 +210,29 @@ export default function TasksList({
         {tags.map((item) => {
           return (
             <div
-              key={item.id}
-              className={item.active ? activeTagStyle : tagStyle}
+              key={item.key}
+              data-key={item.key}
+              className={item.key === activeTag ? activeTagStyle : tagStyle}
               onClick={(e) => toggleTags(e)}
             >
               {item.title}
             </div>
           );
         })}
-        {/* <div
-          className="py-4 w-1/3 text-center font-bold text-[14px] border-b-2 rounded-tl-[10px]"
-          onClick={(e) => toggleTags(e)}
-        >
-          全部
-        </div>
-        <div
-          className="py-4 w-1/3 text-center font-bold text-[14px] border-b-2"
-          onClick={(e) => toggleTags(e)}
-        >
-          待完成
-        </div>
-        <div
-          className="py-4 w-1/3 text-center font-bold text-[14px] border-b-2 rounded-tr-[10px]"
-          onClick={(e) => toggleTags(e)}
-        >
-          已完成
-        </div> */}
       </div>
       {/* tasks list */}
       <div className="p-6 flex flex-col gap-4">
-        {renderState.length !== 0 //不是渲染用的不等於零，是基礎的API不等於零
-          ? renderState.map((item, index) => (
-              <TaskItem
-                key={item.id}
-                index={index}
-                id={item.id}
-                content={item.content}
-                completed={item.completed_at ? true : false}
-                tasksState={tasksState}
-                setTasksState={setTasksState}
-                handleCompleted={handleCompleted}
-                handleValue={handleValue}
-                handleDelete={handleDelete}
-              />
-            ))
-          : `項目為空`}
+        {/* {!isListEmpty ? (
+          all
+        ) : (
+          <div className="w-full pb-4  border-b text-center text-gray-400">
+            項目為空
+          </div>
+        )} */}
+
+        {isAll && all}
+        {isUncompleted && uncompleted}
+        {isCompleted && completed}
         <div className="mt-6 pr-8 flex justify-between items-start">
           <span>{uncompletedLength} 個待完成項目</span>
           <button className=" text-primary-gray" onClick={deleteDone}>
