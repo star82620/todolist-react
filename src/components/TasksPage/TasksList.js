@@ -1,48 +1,30 @@
 import { useState, useEffect } from "react";
 import TaskItem from "./TaskItem";
-import EmptyTasks from "./EmptyTasks";
 import getToken from "../../helper/token";
 import getTasksData from "../../helper/getTasksData";
 
 // ToDo 列表
-export default function TasksList({ tasksState, setTasksState }) {
-  //-------------- tasksLength ---------------
+export default function TasksList({
+  tasksState,
+  setTasksState,
+  renderState,
+  setRenderState,
+}) {
+  //------------- 未完成任務數量 ---------------
   const uncompletedTasks = tasksState.filter((item) => !item.completed_at);
-  const [tasksLength, setTasksLeng] = useState(uncompletedTasks.length);
+  const [uncompletedLength, setUncompletedLength] = useState(
+    uncompletedTasks.length
+  );
 
+  //如果 tasksState 有更新，就更新未完成任務數量
   useEffect(() => {
-    setTasksLeng(uncompletedTasks.length);
-    console.log("d");
+    setUncompletedLength(uncompletedTasks.length);
+    console.log("我更新了！", uncompletedTasks.length);
   }, [tasksState]);
-  //--------------- 需要重新整理 ---------------
-  console.log("leng", tasksLength);
 
-  if (tasksLength < 1) {
-    return <EmptyTasks />;
-  }
+  //------------------------------
 
   const authHeader = getToken();
-
-  //切換頁面 Tag
-  async function toggleTags(e) {
-    const res = await getTasksData();
-    let filterData;
-
-    if (e.target.innerText === "待完成") {
-      filterData = res.todos.filter(
-        (item) => typeof item.completed_at !== "string"
-      );
-    } else if (e.target.innerText === "已完成") {
-      filterData = res.todos.filter(
-        (item) => typeof item.completed_at === "string"
-      );
-    } else {
-      filterData = res.todos;
-    }
-
-    //將篩選好的內容 render 出來
-    setTasksState(filterData);
-  }
 
   //改變 task 的完成狀態
   async function handleCompleted(taskId) {
@@ -52,12 +34,20 @@ export default function TasksList({ tasksState, setTasksState }) {
       headers: authHeader,
     });
     const data = await res.json();
+    console.log(data); //
+
+    const index = tasksState.findIndex((item) => {
+      return item.id === taskId;
+    });
+    const newTasks = [...tasksState];
+    newTasks[index] = data;
+    setTasksState(newTasks);
     return data;
   }
 
   //修改 task 文字
   async function handleValue(targetIndex, taskId, newValue) {
-    const bodyValue = {
+    const body = {
       todo: {
         content: newValue,
       },
@@ -67,46 +57,60 @@ export default function TasksList({ tasksState, setTasksState }) {
     const res = await fetch(apiUrl, {
       method: "PUT",
       headers: authHeader,
-      body: JSON.stringify(bodyValue),
+      body: JSON.stringify(body),
     });
     const data = await res.json();
-    const isSuccess = await res.ok;
-    if (isSuccess) {
-      const newTasks = tasksState.map((item, index) => {
-        if (index === targetIndex) {
-          item.content = newValue;
-          return item;
-        }
-        return item;
+    console.log("l", data);
+    if (await res.ok) {
+      //更新本地的 tasksState
+      const index = tasksState.findIndex((item) => {
+        return item.id === taskId;
       });
+      const newTasks = [...tasksState];
+      newTasks[index].content = data.content;
       setTasksState(newTasks);
+    } else {
+      alert("oh");
     }
     return data;
   }
 
   //刪除個別 task 的 API
   async function deleteTask(taskId) {
-    const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}`;
-    const res = await fetch(apiUrl, {
-      method: "DELETE",
-      headers: authHeader,
-    });
-    const data = await res.json();
-    return data;
+    try {
+      const apiUrl = `https://todoo.5xcamp.us/todos/${taskId}`;
+      const res = await fetch(apiUrl, {
+        method: "DELETE",
+        headers: authHeader,
+      });
+      return res;
+    } catch {
+      console.log("ohno");
+    }
   }
 
   //刪除個別 task
-  function handleDelete(targetIndex, taskId) {
-    deleteTask(taskId);
+  async function handleDelete(targetIndex, taskId) {
+    const res = await deleteTask(taskId);
+    const data = await res.json();
 
-    const newTasks = tasksState.filter((item, index) => {
-      return index !== targetIndex;
-    });
-    setTasksState(newTasks);
+    //更新畫面渲染、本地的 tasksState
+    if (await res.ok) {
+      const index = tasksState.findIndex((item) => {
+        return item.id === taskId;
+      });
+      const newTasks = [...tasksState];
+      newTasks.splice(index, 1);
+      setTasksState(newTasks);
+      setRenderState(newTasks);
+    } else {
+      alert(`出現異常，請重試 ${data}`);
+    }
   }
 
   //刪除所有已完成的 task
   async function deleteDone() {
+    const newTasks = [...tasksState];
     //找出已完成的 task 並個別跑刪除操作
     const completedTasks = tasksState.filter((item) => {
       return item.completed_at;
@@ -114,60 +118,123 @@ export default function TasksList({ tasksState, setTasksState }) {
     const completedTasksId = completedTasks.map((item) => item.id);
     completedTasksId.map((item) => {
       deleteTask(item);
+      newTasks.splice(item, 1);
     });
 
-    //更新畫面
-    const newTasks = tasksState.filter((item) => {
-      return !item.completed_at;
-    });
     setTasksState(newTasks);
   }
 
-  const tags = [{ tag: "全部" }];
+  //---- tag ----
+  const tagStyle =
+    "py-4 w-1/3 text-center font-bold text-[14px] text-primary-gray border-b-2 border-baseline-gray-400";
+  const activeTagStyle =
+    "py-4 w-1/3 text-center font-bold text-[14px] border-b-2 border-baseline-gray-700 text-black";
+
+  const [activeTag, setActiveTag] = useState("all");
+  console.log(activeTag);
+
+  const tags = [
+    { key: "all", title: "全部" },
+    { key: "uncompleted", title: "待完成" },
+    { key: "completed", title: "已完成" },
+  ];
+
+  function toggleTags(e) {
+    setActiveTag(e.target.dataset.key);
+  }
+
+  const all = (() =>
+    tasksState.map((item, index) => (
+      <TaskItem
+        key={item.id}
+        index={index}
+        id={item.id}
+        content={item.content}
+        completed={item.completed_at ? true : false}
+        tasksState={tasksState}
+        setTasksState={setTasksState}
+        handleCompleted={handleCompleted}
+        handleValue={handleValue}
+        handleDelete={handleDelete}
+      />
+    )))();
+
+  const uncompleted = (() =>
+    tasksState.map((item, index) => {
+      if (item.completed_at !== null) return null;
+      return (
+        <TaskItem
+          key={item.id}
+          index={index}
+          id={item.id}
+          content={item.content}
+          completed={item.completed_at ? true : false}
+          tasksState={tasksState}
+          setTasksState={setTasksState}
+          handleCompleted={handleCompleted}
+          handleValue={handleValue}
+          handleDelete={handleDelete}
+        />
+      );
+    }))();
+
+  const completed = (() =>
+    tasksState.map((item, index) => {
+      if (item.completed_at === null) return null;
+      return (
+        <TaskItem
+          key={item.id}
+          index={index}
+          id={item.id}
+          content={item.content}
+          completed={item.completed_at ? true : false}
+          tasksState={tasksState}
+          setTasksState={setTasksState}
+          handleCompleted={handleCompleted}
+          handleValue={handleValue}
+          handleDelete={handleDelete}
+        />
+      );
+    }))();
+
+  const isListEmpty = renderState.length === 0; //不是渲染用的不等於零，是基礎的API不等於零
+
+  const isAll = activeTag === "all";
+  const isUncompleted = activeTag === "uncompleted";
+  const isCompleted = activeTag === "completed";
 
   return (
     <div className="mt-4 rounded-[10px] bg-white text-[14px] shadow-input-shadow">
       {/* tag */}
-      <div className="w-full flex">
-        <div
-          className="py-4 w-1/3 text-center font-bold text-[14px] border-b-2 rounded-tl-[10px]"
-          onClick={(e) => toggleTags(e)}
-        >
-          全部
-        </div>
-        <div
-          className="py-4 w-1/3 text-center font-bold text-[14px] border-b-2"
-          onClick={(e) => toggleTags(e)}
-        >
-          待完成
-        </div>
-        <div
-          className="py-4 w-1/3 text-center font-bold text-[14px] border-b-2 rounded-tr-[10px]"
-          onClick={(e) => toggleTags(e)}
-        >
-          已完成
-        </div>
+      <div className="w-full flex first-of-type:rounded-tl-[10px] last-of-type:rounded-tr-[10px]">
+        {tags.map((item) => {
+          return (
+            <div
+              key={item.key}
+              data-key={item.key}
+              className={item.key === activeTag ? activeTagStyle : tagStyle}
+              onClick={(e) => toggleTags(e)}
+            >
+              {item.title}
+            </div>
+          );
+        })}
       </div>
       {/* tasks list */}
       <div className="p-6 flex flex-col gap-4">
-        {tasksState
-          ? tasksState.map((item, index) => (
-              <TaskItem
-                key={item.id}
-                index={index}
-                id={item.id}
-                content={item.content}
-                completed={item.completed_at ? true : false}
-                tasksState={tasksState}
-                setTasksState={setTasksState}
-                handleCompleted={handleCompleted}
-                handleValue={handleValue}
-                handleDelete={handleDelete}
-              />
-            ))
-          : console.log("我死了")}
+        {/* {!isListEmpty ? (
+          all
+        ) : (
+          <div className="w-full pb-4  border-b text-center text-gray-400">
+            項目為空
+          </div>
+        )} */}
+
+        {isAll && all}
+        {isUncompleted && uncompleted}
+        {isCompleted && completed}
         <div className="mt-6 pr-8 flex justify-between items-start">
-          <span>{tasksLength} 個待完成項目</span>
+          <span>{uncompletedLength} 個待完成項目</span>
           <button className=" text-primary-gray" onClick={deleteDone}>
             清除已完成項目
           </button>
