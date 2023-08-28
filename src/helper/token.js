@@ -6,5 +6,6 @@ export default function getToken() {
     "Content-Type": "application/json",
   };
 
+  console.log("auth", authHeader);
   return authHeader;
 }
