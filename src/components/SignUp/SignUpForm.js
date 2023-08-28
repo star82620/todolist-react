@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import TextInput from "../TextInput";
 
 export default function SignUpForm({ signUpState, setSignUpState }) {
+  const navigate = useNavigate();
   const postData = { user: signUpState };
   const apiUrl = "https://todoo.5xcamp.us/users";
 
@@ -11,23 +12,28 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
     setSignUpState(signUpState);
   }
 
-  function submitSignUp() {
-    console.log(postData);
-    fetch(apiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(postData),
-    })
-      .then((res) => {
-        let headers = res.headers;
-        let token = headers.get("authorization");
-
-        localStorage.setItem("userToken", token);
-
-        return res.json();
-      })
-      .then((data) => console.log(data))
-      .catch((error) => console.log(error));
+  async function submitSignUp() {
+    try {
+      const res = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(postData),
+      });
+      const headers = await res.headers;
+      const token = await headers.get("authorization");
+      localStorage.setItem("userToken", await token);
+      const data = await res.json();
+      console.log(data);
+      if (res.ok) {
+        alert("註冊成功，將跳轉至任務頁面");
+        navigate("/tasks");
+      } else {
+        const errMsg = data.error;
+        console.log(errMsg);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   const formAry = [
