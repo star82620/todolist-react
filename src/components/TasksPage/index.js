@@ -1,9 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NewTaskInput from "./NewTaskInput";
 import TasksList from "./TasksList";
 import Header from "./Header";
 import getTasksData from "../../helper/getTasksData";
 import EmptyTasks from "./EmptyTasks";
+import checkLogin from "../../helper/checkLogin";
 
 // TO-DO LIST PAGE
 export default function TasksPage() {
@@ -11,21 +13,30 @@ export default function TasksPage() {
   const [tasksState, setTasksState] = useState([]);
   //渲染用狀態
   const [renderState, setRenderState] = useState(tasksState);
+  const navigate = useNavigate();
 
   //一進畫面就 render
+  // 如果沒有 token 就轉到 login 頁，有 token 就檢查有沒有權限，
+  // 有權限就 getTasksData ，沒權限就轉到 login
   useEffect(() => {
-    const res = getTasksData();
-    res
-      .then((data) => {
-        // 如果 GET 成功，得到 todos 列表
-        if (data.todos) {
-          setTasksState(data.todos);
-          setRenderState(data.todos); //在這裡不能直接拿 TasksState，因為他還沒有被更新
-        } else {
-          //跳轉到 login
-        }
-      })
-      .catch((err) => console.log(err));
+    const isAccess = checkLogin();
+    if (isAccess) {
+      const res = getTasksData();
+      res
+        .then((data) => {
+          // 如果 GET 成功，得到 todos 列表
+          if (data.todos) {
+            setTasksState(data.todos);
+            setRenderState(data.todos); //在這裡不能直接拿 TasksState，因為他還沒有被更新
+          } else {
+            //跳轉到 login
+            navigate("/");
+          }
+        })
+        .catch((err) => console.log(err));
+    } else {
+      navigate("/");
+    }
   }, []);
 
   console.log("index-renderState", renderState);
