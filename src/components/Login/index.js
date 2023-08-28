@@ -14,7 +14,7 @@ export default function Login() {
 
   useEffect(() => {
     // 如果沒有 token 就留在這一頁，有 token 就檢查有沒有權限，
-    // 有權限就轉到 tasks，沒權限就刪除 token、留在這一頁
+    // 有權限就轉到 tasks，沒權限就留在這一頁
     const auth = getToken();
     const token = auth.Authorization;
     if (token !== "") {

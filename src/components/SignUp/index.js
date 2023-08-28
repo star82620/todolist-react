@@ -1,6 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import Cover from "../Cover";
 import SignUpForm from "./SignUpForm";
+import getToken from "../../helper/token";
+import checkLogin from "../../helper/checkLogin";
 
 import { useState } from "react";
 
@@ -13,8 +16,20 @@ export default function SignUp() {
   //資料放在外面才能夠被更新
 
   const [signUpState, setSignUpState] = useState(signUpData);
+  const navigate = useNavigate();
 
-  console.log("signUpState", signUpState);
+  useEffect(() => {
+    // 如果沒有 token 就留在這一頁，有 token 就檢查有沒有權限，
+    // 有權限就轉到 tasks，沒權限就留在這一頁
+    const auth = getToken();
+    const token = auth.Authorization;
+    if (token !== "") {
+      const isAccess = checkLogin();
+      if (isAccess) {
+        navigate("/tasks");
+      }
+    }
+  }, []);
 
   return (
     <div className="w-full h-screen bg-primary-yellow flex flex-col justify-center items-center px-5">
