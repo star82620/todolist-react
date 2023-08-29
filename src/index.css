@@ -26,3 +26,11 @@ body {
   border: 1px solid #9f9a91;
   border-radius: 5px;
 }
+
+.hiddenErrMsg {
+  display: none;
+}
+
+.showErrMsg {
+  display: block;
+}

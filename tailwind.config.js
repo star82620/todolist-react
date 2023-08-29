@@ -14,6 +14,7 @@ module.exports = {
         "baseline-gray-700": "#333333",
         "baseline-gray-500": "#E5E5E5",
         "baseline-gray-400": "#EFEFEF",
+        "warning-red": "#D87355",
       },
       boxShadow: {
         "input-shadow": "0 0 15px 0 rgba(0,0,0,0.15)",
