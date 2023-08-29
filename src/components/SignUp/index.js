@@ -23,11 +23,9 @@ export default function SignUp() {
     // 有權限就轉到 tasks，沒權限就留在這一頁
     const auth = getToken();
     const token = auth.Authorization;
-    if (token !== "") {
-      const isAccess = checkLogin();
-      if (isAccess) {
-        navigate("/tasks");
-      }
+    const isChecked = checkLogin();
+    if (token !== "" && isChecked) {
+      navigate("/tasks");
     }
   }, []);
 

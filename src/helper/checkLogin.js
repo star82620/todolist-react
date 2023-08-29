@@ -9,10 +9,12 @@ async function checkLogin() {
       headers: authHeader,
     });
     const data = await res.json();
+    console.log(data);
     if (await res.ok) {
       return true;
+    } else {
+      return false;
     }
-    console.log(data);
   } catch (err) {
     console.log(err);
   }

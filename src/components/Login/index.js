@@ -8,22 +8,24 @@ import checkLogin from "../../helper/checkLogin";
 export default function Login() {
   const navigate = useNavigate();
   const [loginState, setLoginState] = useState({ email: "", password: "" });
-  const postData = {
-    user: loginState,
-  };
 
   useEffect(() => {
+    checkToken();
+  }, []);
+
+  async function checkToken() {
     // 如果沒有 token 就留在這一頁，有 token 就檢查有沒有權限，
     // 有權限就轉到 tasks，沒權限就留在這一頁
-    const auth = getToken();
-    const token = auth.Authorization;
-    if (token !== "") {
-      const isAccess = checkLogin();
-      if (isAccess) {
-        navigate("/tasks");
-      }
+    const auth = await getToken();
+    const token = await auth.Authorization; //null => false
+    const isChecked = await checkLogin(); //promise???
+    console.log(token);
+    console.log("checkLogin()", isChecked);
+    if (token && isChecked) {
+      console.log("go");
+      navigate("/tasks");
     }
-  }, []);
+  }
 
   function catchLoginData(e) {
     loginState[e.target.name] = e.target.value;
@@ -31,6 +33,9 @@ export default function Login() {
   }
 
   async function submitLoginData() {
+    const postData = {
+      user: loginState,
+    };
     const apiUrl = "https://todoo.5xcamp.us/users/sign_in";
     const res = await fetch(apiUrl, {
       method: "POST",

@@ -3,7 +3,7 @@ import logo from "../../images/logo.png";
 
 export default function Header({ userName }) {
   const navigate = useNavigate;
-  function logout() {
+  function handleLogout() {
     localStorage.removeItem("userToken");
     navigate("/");
   }
@@ -17,7 +17,7 @@ export default function Header({ userName }) {
       </div>
       <div className="flex">
         <p className="font-bold">{userName}的待辦清單</p>
-        <a className="ml-6" href="" onClick={logout}>
+        <a className="ml-6" href="" onClick={handleLogout}>
           登出
         </a>
       </div>
