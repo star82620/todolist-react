@@ -62,16 +62,19 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(postData),
       });
-      if (res.ok) {
+      const data = await res.json();
+      if (await res.ok) {
         const headers = res.headers;
         const token = headers.get("authorization");
+        const userName = data.nickname;
+        console.log(userName);
         localStorage.setItem("userToken", token);
+        localStorage.setItem("userName", userName);
         navigate("/tasks");
       } else {
         alert("登入失敗，請重試");
         setLoginState({ email: "", password: "" });
       }
-      const data = await res.json();
       console.log(data);
       return data;
     } catch (err) {
