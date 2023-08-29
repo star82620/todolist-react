@@ -1,23 +1,41 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import TextInput from "../TextInput";
 import Cover from "../Cover";
+import getToken from "../../helper/token";
+import checkLogin from "../../helper/checkLogin";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [loginState, setLoginState] = useState({ email: "", password: "" });
-  const postData = {
-    user: loginState,
-  };
+
+  useEffect(() => {
+    checkToken();
+  }, []);
+
+  async function checkToken() {
+    // 如果沒有 token 就留在這一頁，有 token 就檢查有沒有權限，
+    // 有權限就轉到 tasks，沒權限就留在這一頁
+    const auth = await getToken();
+    const token = await auth.Authorization; //null => false
+    const isChecked = await checkLogin(); //promise???
+    console.log(token);
+    console.log("checkLogin()", isChecked);
+    if (token && isChecked) {
+      console.log("go");
+      navigate("/tasks");
+    }
+  }
 
   function catchLoginData(e) {
     loginState[e.target.name] = e.target.value;
     setLoginState(loginState);
   }
 
-  const navigate = useNavigate();
-
   async function submitLoginData() {
-    console.log(postData);
+    const postData = {
+      user: loginState,
+    };
     const apiUrl = "https://todoo.5xcamp.us/users/sign_in";
     const res = await fetch(apiUrl, {
       method: "POST",
@@ -34,12 +52,13 @@ export default function Login() {
         alert("登入失敗，請重試");
       }
       const data = await res.json();
+      console.log(data);
       return data;
     } catch (err) {
       console.log(err);
     }
   }
-  console.log("loginState", loginState);
+
   return (
     <div className="w-full h-screen bg-primary-yellow flex flex-col justify-center items-center px-5">
       <div className="max-w-[800px] w-full flex justify-between ">
