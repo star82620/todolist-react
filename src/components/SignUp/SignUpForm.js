@@ -1,11 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import TextInput from "../TextInput";
 import { useState } from "react";
 
 export default function SignUpForm({ signUpState, setSignUpState }) {
-  const postData = { user: signUpState };
-  const apiUrl = "https://todoo.5xcamp.us/users";
-
+  const navigate = useNavigate();
   // 個別 input 的錯誤訊息，有錯誤的時候才填入
   const [formErrors, setFormErrors] = useState({
     email: "",
@@ -50,6 +48,8 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
 
   async function submitSignUp() {
     if (!validateForm()) return;
+    const postData = { user: signUpState };
+    const apiUrl = "https://todoo.5xcamp.us/users";
 
     try {
       const res = await fetch(apiUrl, {
@@ -61,12 +61,14 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
       const headers = await res.headers;
       const token = await headers.get("authorization");
       localStorage.setItem("userToken", await token);
-
+      if (data && res.ok) {
+        alert("註冊成功，將跳轉至任務頁面");
+        navigate("/tasks");
+      }
       if (
         (await data.message) === "註冊發生錯誤" &&
         (await data.error[0]) === "電子信箱 已被使用"
       ) {
-        console.log("ohoh");
         setFormErrors({ ...formErrors, email: data.error });
       }
     } catch (error) {

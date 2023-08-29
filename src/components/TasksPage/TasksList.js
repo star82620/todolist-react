@@ -115,8 +115,10 @@ export default function TasksList({
     const completedTasks = tasksState.filter((item) => {
       return item.completed_at;
     });
+    console.log("DT", completedTasks);
     const completedTasksId = completedTasks.map((item) => item.id);
     completedTasksId.map((item) => {
+      console.log(item);
       deleteTask(item);
       newTasks.splice(item, 1);
     });
@@ -131,7 +133,6 @@ export default function TasksList({
     "py-4 w-1/3 text-center font-bold text-[14px] border-b-2 border-baseline-gray-700 text-black";
 
   const [activeTag, setActiveTag] = useState("all");
-  console.log(activeTag);
 
   const tags = [
     { key: "all", title: "全部" },
