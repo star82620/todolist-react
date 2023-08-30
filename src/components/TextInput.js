@@ -1,9 +1,12 @@
+import { useState } from "react";
+
 export default function TextInput({
   label,
   placeholder,
   name,
   changeFunc,
   value,
+  errMsg,
 }) {
   return (
     <label>
@@ -16,6 +19,13 @@ export default function TextInput({
         name={name}
         onChange={changeFunc}
       />
+      {errMsg && (
+        <p>
+          <span className="mt-1 font-bold text-[14px] text-warning-red">
+            {errMsg}
+          </span>
+        </p>
+      )}
     </label>
   );
 }

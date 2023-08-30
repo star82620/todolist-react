@@ -36,7 +36,7 @@ export default function TasksPage() {
 
   console.log("index-renderState", renderState);
   const isEmpty = tasksState.length === 0 ? true : false;
-  const userName = "王小明";
+  const userName = localStorage.getItem("userName");
 
   return (
     <div className="w-full h-screen bg-tasksPageBg flex flex-col items-center">

@@ -27,31 +27,54 @@ export default function Login() {
     }
   }
 
+  // -----------------
+  const [formErrors, setFormErrors] = useState({});
+
+  function validateForm() {
+    let errors = {};
+
+    if (!loginState.email) {
+      errors.email = "此欄位不可為空";
+    }
+    if (!loginState.password) {
+      errors.password = "此欄位不可為空";
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
+
   function catchLoginData(e) {
-    loginState[e.target.name] = e.target.value;
-    setLoginState(loginState);
+    const { name, value } = e.target;
+    setLoginState({ ...loginState, [name]: value });
   }
 
   async function submitLoginData() {
+    if (!validateForm()) return;
+
     const postData = {
       user: loginState,
     };
     const apiUrl = "https://todoo.5xcamp.us/users/sign_in";
-    const res = await fetch(apiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(postData),
-    });
     try {
-      if (res.ok) {
+      const res = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(postData),
+      });
+      const data = await res.json();
+      if (await res.ok) {
         const headers = res.headers;
         const token = headers.get("authorization");
+        const userName = data.nickname;
+        console.log(userName);
         localStorage.setItem("userToken", token);
+        localStorage.setItem("userName", userName);
         navigate("/tasks");
       } else {
         alert("登入失敗，請重試");
+        setLoginState({ email: "", password: "" });
       }
-      const data = await res.json();
       console.log(data);
       return data;
     } catch (err) {
@@ -70,14 +93,18 @@ export default function Login() {
               <TextInput
                 name="email"
                 label="Email"
+                value={loginState.email}
                 placeholder="請輸入Email"
                 changeFunc={catchLoginData}
+                errMsg={formErrors.email}
               />
               <TextInput
                 name="password"
                 label="密碼"
+                value={loginState.password}
                 placeholder="請輸入密碼"
                 changeFunc={catchLoginData}
+                errMsg={formErrors.password}
               />
             </div>
             <button
