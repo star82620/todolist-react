@@ -11,9 +11,7 @@ export default function Header({ userName }) {
       headers: authHeader,
     });
     const data = await res.json();
-
-    console.log(data);
-    if (res.ok) {
+    if (data && res.ok) {
       localStorage.removeItem("userToken");
     } else {
       alert("登出失敗，請再試一次");

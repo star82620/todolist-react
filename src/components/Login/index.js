@@ -19,10 +19,7 @@ export default function Login() {
     const auth = await getToken();
     const token = await auth.Authorization; //null => false
     const isChecked = await checkLogin(); //promise???
-    console.log(token);
-    console.log("checkLogin()", isChecked);
     if (token && isChecked) {
-      console.log("go");
       navigate("/tasks");
     }
   }
@@ -72,12 +69,9 @@ export default function Login() {
       const headers = res.headers;
       const token = headers.get("authorization");
       const userName = data.nickname;
-      console.log(userName);
       localStorage.setItem("userToken", token);
       localStorage.setItem("userName", userName);
       navigate("/tasks");
-
-      console.log(data);
       return data;
     } catch (err) {
       console.log(err);

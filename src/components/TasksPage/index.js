@@ -33,8 +33,6 @@ export default function TasksPage() {
     setTasksState(data.todos);
     setRenderState(data.todos); //在這裡不能直接拿 TasksState，因為他還沒有被更新
   }
-
-  console.log("index-renderState", renderState);
   const isEmpty = tasksState.length === 0 ? true : false;
   const userName = localStorage.getItem("userName");
 
