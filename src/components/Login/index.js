@@ -7,7 +7,8 @@ import checkLogin from "../../helper/checkLogin";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [loginState, setLoginState] = useState({ email: "", password: "" });
+  const initialLoginState = { email: "", password: "" };
+  const [loginState, setLoginState] = useState(initialLoginState);
 
   useEffect(() => {
     checkToken();
@@ -24,7 +25,6 @@ export default function Login() {
     }
   }
 
-  // -----------------
   const [formErrors, setFormErrors] = useState({});
 
   function validateForm() {
@@ -62,7 +62,7 @@ export default function Login() {
       const data = await res.json();
       if (await !res.ok) {
         alert("登入失敗，請重試");
-        setLoginState({ email: "", password: "" });
+        setLoginState(initialLoginState);
         return;
       }
 
