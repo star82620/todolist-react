@@ -78,7 +78,6 @@ export default function TasksList({
         method: "DELETE",
         headers: authHeader,
       });
-      console.log(res);
       return res;
     } catch (err) {
       console.log(err);
@@ -95,7 +94,8 @@ export default function TasksList({
       const index = tasksState.findIndex((item) => {
         return item.id === taskId;
       });
-      const newTasks = tasksState.filter((task) => !task.completed_at);
+      const newTasks = [...tasksState];
+      newTasks.splice(index, 1);
       setTasksState(newTasks);
       setRenderState(newTasks);
     } else {
