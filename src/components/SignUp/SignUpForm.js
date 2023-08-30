@@ -64,7 +64,6 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
       localStorage.setItem("userToken", await token);
       localStorage.setItem("userName", userName);
       if (data && res.ok) {
-        alert("註冊成功，將跳轉至任務頁面");
         navigate("/tasks");
       }
       if (
