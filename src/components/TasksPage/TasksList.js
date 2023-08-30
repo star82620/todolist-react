@@ -65,7 +65,7 @@ export default function TasksList({
       newTasks[index].content = data.content;
       setTasksState(newTasks);
     } else {
-      alert("oh");
+      alert("出現異常，請再確認");
     }
     return data;
   }
@@ -78,6 +78,7 @@ export default function TasksList({
         method: "DELETE",
         headers: authHeader,
       });
+      console.log(res);
       return res;
     } catch (err) {
       console.log(err);
@@ -94,8 +95,7 @@ export default function TasksList({
       const index = tasksState.findIndex((item) => {
         return item.id === taskId;
       });
-      const newTasks = [...tasksState];
-      newTasks.splice(index, 1);
+      const newTasks = tasksState.filter((task) => !task.completed_at);
       setTasksState(newTasks);
       setRenderState(newTasks);
     } else {
@@ -110,15 +110,12 @@ export default function TasksList({
       return item.completed_at;
     });
     const completedTasksId = completedTasks.map((item) => item.id);
-
-    completedTasksId.map((taskId) => {
+    completedTasksId.forEach((taskId) => {
       deleteTask(taskId);
-      // const newTasks = [...tasksState];
-      // const a = newTasks.filter((task) => task.id !== taskId);
-      // console.log("A", a);
     });
 
-    // setTasksState(a);
+    const newTasks = tasksState.filter((task) => !task.completed_at);
+    setTasksState(newTasks);
     //刪一次就跑一次
   }
 
