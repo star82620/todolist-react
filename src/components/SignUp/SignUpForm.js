@@ -78,7 +78,7 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
     }
   }
 
-  const formAry = [
+  const inputs = [
     {
       label: "Email",
       placeholder: "請輸入Email",
@@ -108,18 +108,16 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
   return (
     <form className="flex flex-col items-center">
       <div className="w-full flex flex-col gap-y-4 py-6 self-start">
-        {formAry.map((item) => {
-          return (
-            <TextInput
-              key={item.name}
-              label={item.label}
-              placeholder={item.placeholder}
-              name={item.name}
-              changeFunc={catchSignUpData}
-              errMsg={item.errMsg}
-            />
-          );
-        })}
+        {inputs.map((item) => (
+          <TextInput
+            key={item.name}
+            label={item.label}
+            placeholder={item.placeholder}
+            name={item.name}
+            changeFunc={catchSignUpData}
+            errMsg={item.errMsg}
+          />
+        ))}
       </div>
       <button
         className="rounded-[10px] px-12 py-3 my-0 mx-auto bg-black text-white"

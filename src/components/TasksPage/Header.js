@@ -1,11 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import logo from "../../images/logo.png";
 
 export default function Header({ userName }) {
-  const navigate = useNavigate;
   function handleLogout() {
     localStorage.removeItem("userToken");
-    navigate("/");
   }
 
   return (
@@ -15,9 +13,9 @@ export default function Header({ userName }) {
       </div>
       <div className="flex">
         <p className="font-bold">{userName}的待辦清單</p>
-        <a className="ml-6" href="" onClick={handleLogout}>
+        <Link to="/" className="ml-6" onClick={handleLogout}>
           登出
-        </a>
+        </Link>
       </div>
     </header>
   );

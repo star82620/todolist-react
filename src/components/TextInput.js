@@ -20,11 +20,9 @@ export default function TextInput({
         onChange={changeFunc}
       />
       {errMsg && (
-        <p>
-          <span className="mt-1 font-bold text-[14px] text-warning-red">
-            {errMsg}
-          </span>
-        </p>
+        <span className="mt-1 font-bold text-[14px] text-warning-red">
+          {errMsg}
+        </span>
       )}
     </label>
   );
