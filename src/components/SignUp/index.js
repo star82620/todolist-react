@@ -21,13 +21,18 @@ export default function SignUp() {
   useEffect(() => {
     // 如果沒有 token 就留在這一頁，有 token 就檢查有沒有權限，
     // 有權限就轉到 tasks，沒權限就留在這一頁
-    const auth = getToken();
-    const token = auth.Authorization;
-    const isChecked = checkLogin();
-    if (token !== "" && isChecked) {
+    checkToken();
+  }, []);
+
+  async function checkToken() {
+    const auth = await getToken();
+    const token = await auth.Authorization;
+    const isChecked = await checkLogin();
+    if (token && isChecked) {
       navigate("/tasks");
     }
-  }, []);
+  }
+  console.log("s", signUpState);
 
   return (
     <div className="w-full h-screen bg-primary-yellow flex flex-col justify-center items-center px-5">

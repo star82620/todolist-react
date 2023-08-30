@@ -18,8 +18,8 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
     setSignUpState({ ...signUpState, [name]: value });
   }
 
-  function validateForm() {
-    let errors = {};
+  let errors = {};
+  function isValidForm() {
     const emailVerify = /^(\w|\.)+[@](\w|\.).*$/;
     const passwordVerify = /^\w{6,}$/;
 
@@ -34,20 +34,21 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
     if (!passwordVerify.test(signUpState.password)) {
       errors.password = "密碼至少需要 6 個字";
     }
-    const confirmPassword = signUpState.rePassword === signUpState.password;
+    const isConfirmed = signUpState.rePassword === signUpState.password;
 
     if (!signUpState.rePassword) {
-      errors.repassword = "密碼不得為空";
-    } else if (!confirmPassword) {
+      errors.repassword = "本欄不得為空";
+    } else if (!isConfirmed) {
       errors.repassword = "與前一次密碼不同，請再確認";
     }
+    console.log("e", isConfirmed);
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   }
 
   async function submitSignUp() {
-    if (!validateForm()) return;
+    if (!isValidForm()) return;
     const postData = { user: signUpState };
     const apiUrl = "https://todoo.5xcamp.us/users";
 
@@ -61,21 +62,21 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
       const headers = await res.headers;
       const token = await headers.get("authorization");
       const userName = data.nickname;
-      localStorage.setItem("userToken", await token);
-      localStorage.setItem("userName", userName);
       if (data && res.ok) {
+        localStorage.setItem("userToken", await token);
+        localStorage.setItem("userName", userName);
         navigate("/tasks");
       }
-      if (
-        (await data.message) === "註冊發生錯誤" &&
-        (await data.error[0]) === "電子信箱 已被使用"
-      ) {
-        setFormErrors({ ...formErrors, email: data.error });
+      const { message, error } = await data;
+      if (message === "註冊發生錯誤" && error[0] === "電子信箱 已被使用") {
+        setFormErrors({ email: data.error });
       }
     } catch (error) {
       console.log(error);
     }
   }
+  console.log(formErrors);
+  console.log(errors);
 
   const inputs = [
     {

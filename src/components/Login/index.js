@@ -19,7 +19,7 @@ export default function Login() {
     const auth = await getToken();
     const token = await auth.Authorization; //null => false
     const isChecked = await checkLogin(); //promise???
-    if (token && isChecked) {
+    if (!token && isChecked) {
       navigate("/tasks");
     }
   }
