@@ -34,14 +34,12 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
     if (!passwordVerify.test(signUpState.password)) {
       errors.password = "密碼至少需要 6 個字";
     }
-    const isConfirmed = signUpState.rePassword === signUpState.password;
 
     if (!signUpState.rePassword) {
       errors.repassword = "本欄不得為空";
-    } else if (!isConfirmed) {
+    } else if (!(signUpState.rePassword === signUpState.password)) {
       errors.repassword = "與前一次密碼不同，請再確認";
     }
-    console.log("e", isConfirmed);
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -75,8 +73,6 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
       console.log(error);
     }
   }
-  console.log(formErrors);
-  console.log(errors);
 
   const inputs = [
     {
