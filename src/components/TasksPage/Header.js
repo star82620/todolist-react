@@ -1,9 +1,23 @@
 import { Link } from "react-router-dom";
 import logo from "../../images/logo.png";
+import getToken from "../../helper/token";
 
 export default function Header({ userName }) {
-  function handleLogout() {
-    localStorage.removeItem("userToken");
+  async function handleLogout() {
+    const apiUrl = "https://todoo.5xcamp.us/users/sign_out";
+    const authHeader = await getToken();
+    const res = await fetch(apiUrl, {
+      method: "DELETE",
+      headers: authHeader,
+    });
+    const data = await res.json();
+
+    console.log(data);
+    if (res.ok) {
+      localStorage.removeItem("userToken");
+    } else {
+      alert("登出失敗，請再試一次");
+    }
   }
 
   return (
