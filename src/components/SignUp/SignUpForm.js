@@ -63,7 +63,7 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
       if (data && res.ok) {
         localStorage.setItem("userToken", await token);
         localStorage.setItem("userName", userName);
-        navigate("/tasks");
+        navigate("/todolist-react/tasks");
       }
       const { message, error } = await data;
       if (message === "註冊發生錯誤" && error[0] === "電子信箱 已被使用") {

@@ -30,7 +30,8 @@ export default function TasksPage() {
     const token = await auth.Authorization;
     const isChecked = await checkLogin();
     const data = await getTasksData();
-    if (!token || !isChecked || !data.todos) return navigate("/");
+    if (!token || !isChecked || !data.todos)
+      return navigate("/todolist-react/");
 
     setTasksState(data.todos);
     setRenderState(data.todos); //在這裡不能直接拿 TasksState，因為他還沒有被更新
