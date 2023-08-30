@@ -29,7 +29,7 @@ export default function SignUp() {
     const token = await auth.Authorization;
     const isChecked = await checkLogin();
     if (token && isChecked) {
-      navigate("/tasks");
+      navigate("/todolist-react/tasks");
     }
   }
   console.log("s", signUpState);

@@ -122,7 +122,7 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
       >
         註冊帳號
       </button>
-      <Link to="/" className="mt-6 block">
+      <Link to="/todolist-react/" className="mt-6 block">
         登入
       </Link>
     </form>

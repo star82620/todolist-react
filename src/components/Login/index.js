@@ -21,7 +21,7 @@ export default function Login() {
     const token = await auth.Authorization; //null => false
     const isChecked = await checkLogin(); //promise???
     if (!token && isChecked) {
-      navigate("/tasks");
+      navigate("/todolist-react/tasks");
     }
   }
 
@@ -71,7 +71,7 @@ export default function Login() {
       const userName = data.nickname;
       localStorage.setItem("userToken", token);
       localStorage.setItem("userName", userName);
-      navigate("/tasks");
+      navigate("/todolist-react/tasks");
       return data;
     } catch (err) {
       console.log(err);
@@ -111,7 +111,7 @@ export default function Login() {
               登入
             </button>
 
-            <Link to="/signup" className="mt-6 block">
+            <Link to="/todolist-react/signup" className="mt-6 block">
               註冊帳號
             </Link>
           </form>

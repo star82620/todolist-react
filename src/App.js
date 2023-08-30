@@ -11,7 +11,7 @@ import SignUp from "./components/SignUp";
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/">
+      <Route path="/todolist-react/">
         <Route index element={<Login />} />
         <Route path="signup" element={<SignUp />} />
         <Route path="tasks" element={<TasksPage />} />

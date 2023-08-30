@@ -14,7 +14,7 @@ export default function Header({ userName }) {
     const data = await res.json();
     if (res.ok) {
       localStorage.removeItem("userToken");
-      navigate("/");
+      navigate("/todolist-react/");
     }
   }
 
