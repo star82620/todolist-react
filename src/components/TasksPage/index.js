@@ -16,6 +16,8 @@ export default function TasksPage() {
   const [renderState, setRenderState] = useState(tasksState);
   const navigate = useNavigate();
 
+  console.log("state", tasksState);
+
   //一進畫面就 render
   // 如果沒有 token 就轉到 login 頁，有 token 就檢查有沒有權限，
   // 有權限就 getTasksData ，沒權限就轉到 login
@@ -33,8 +35,6 @@ export default function TasksPage() {
     setTasksState(data.todos);
     setRenderState(data.todos); //在這裡不能直接拿 TasksState，因為他還沒有被更新
   }
-
-  console.log("index-renderState", renderState);
   const isEmpty = tasksState.length === 0 ? true : false;
   const userName = localStorage.getItem("userName");
 

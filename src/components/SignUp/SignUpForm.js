@@ -18,8 +18,8 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
     setSignUpState({ ...signUpState, [name]: value });
   }
 
-  function validateForm() {
-    let errors = {};
+  let errors = {};
+  function isValidForm() {
     const emailVerify = /^(\w|\.)+[@](\w|\.).*$/;
     const passwordVerify = /^\w{6,}$/;
 
@@ -34,11 +34,10 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
     if (!passwordVerify.test(signUpState.password)) {
       errors.password = "密碼至少需要 6 個字";
     }
-    const confirmPassword = signUpState.rePassword === signUpState.password;
 
     if (!signUpState.rePassword) {
-      errors.repassword = "密碼不得為空";
-    } else if (!confirmPassword) {
+      errors.repassword = "本欄不得為空";
+    } else if (!(signUpState.rePassword === signUpState.password)) {
       errors.repassword = "與前一次密碼不同，請再確認";
     }
 
@@ -47,7 +46,7 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
   }
 
   async function submitSignUp() {
-    if (!validateForm()) return;
+    if (!isValidForm()) return;
     const postData = { user: signUpState };
     const apiUrl = "https://todoo.5xcamp.us/users";
 
@@ -61,24 +60,21 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
       const headers = await res.headers;
       const token = await headers.get("authorization");
       const userName = data.nickname;
-      localStorage.setItem("userToken", await token);
-      localStorage.setItem("userName", userName);
       if (data && res.ok) {
-        alert("註冊成功，將跳轉至任務頁面");
+        localStorage.setItem("userToken", await token);
+        localStorage.setItem("userName", userName);
         navigate("/tasks");
       }
-      if (
-        (await data.message) === "註冊發生錯誤" &&
-        (await data.error[0]) === "電子信箱 已被使用"
-      ) {
-        setFormErrors({ ...formErrors, email: data.error });
+      const { message, error } = await data;
+      if (message === "註冊發生錯誤" && error[0] === "電子信箱 已被使用") {
+        setFormErrors({ email: data.error });
       }
     } catch (error) {
       console.log(error);
     }
   }
 
-  const formAry = [
+  const inputs = [
     {
       label: "Email",
       placeholder: "請輸入Email",
@@ -108,18 +104,16 @@ export default function SignUpForm({ signUpState, setSignUpState }) {
   return (
     <form className="flex flex-col items-center">
       <div className="w-full flex flex-col gap-y-4 py-6 self-start">
-        {formAry.map((item) => {
-          return (
-            <TextInput
-              key={item.name}
-              label={item.label}
-              placeholder={item.placeholder}
-              name={item.name}
-              changeFunc={catchSignUpData}
-              errMsg={item.errMsg}
-            />
-          );
-        })}
+        {inputs.map((item) => (
+          <TextInput
+            key={item.name}
+            label={item.label}
+            placeholder={item.placeholder}
+            name={item.name}
+            changeFunc={catchSignUpData}
+            errMsg={item.errMsg}
+          />
+        ))}
       </div>
       <button
         className="rounded-[10px] px-12 py-3 my-0 mx-auto bg-black text-white"

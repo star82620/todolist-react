@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import TaskItem from "./TaskItem";
 import getToken from "../../helper/token";
-import getTasksData from "../../helper/getTasksData";
 
 // ToDo 列表
 export default function TasksList({
@@ -19,7 +18,6 @@ export default function TasksList({
   //如果 tasksState 有更新，就更新未完成任務數量
   useEffect(() => {
     setUncompletedLength(uncompletedTasks.length);
-    console.log("我更新了！", uncompletedTasks.length);
   }, [tasksState]);
 
   //------------------------------
@@ -34,8 +32,6 @@ export default function TasksList({
       headers: authHeader,
     });
     const data = await res.json();
-    console.log(data); //
-
     const index = tasksState.findIndex((item) => {
       return item.id === taskId;
     });
@@ -60,7 +56,6 @@ export default function TasksList({
       body: JSON.stringify(body),
     });
     const data = await res.json();
-    console.log("l", data);
     if (await res.ok) {
       //更新本地的 tasksState
       const index = tasksState.findIndex((item) => {
@@ -70,7 +65,7 @@ export default function TasksList({
       newTasks[index].content = data.content;
       setTasksState(newTasks);
     } else {
-      alert("oh");
+      alert("出現異常，請再確認");
     }
     return data;
   }
@@ -83,9 +78,10 @@ export default function TasksList({
         method: "DELETE",
         headers: authHeader,
       });
+      console.log(res);
       return res;
-    } catch {
-      console.log("ohno");
+    } catch (err) {
+      console.log(err);
     }
   }
 
@@ -99,8 +95,7 @@ export default function TasksList({
       const index = tasksState.findIndex((item) => {
         return item.id === taskId;
       });
-      const newTasks = [...tasksState];
-      newTasks.splice(index, 1);
+      const newTasks = tasksState.filter((task) => !task.completed_at);
       setTasksState(newTasks);
       setRenderState(newTasks);
     } else {
@@ -110,20 +105,18 @@ export default function TasksList({
 
   //刪除所有已完成的 task
   async function deleteDone() {
-    const newTasks = [...tasksState];
     //找出已完成的 task 並個別跑刪除操作
     const completedTasks = tasksState.filter((item) => {
       return item.completed_at;
     });
-    console.log("DT", completedTasks);
     const completedTasksId = completedTasks.map((item) => item.id);
-    completedTasksId.map((item) => {
-      console.log(item);
-      deleteTask(item);
-      newTasks.splice(item, 1);
+    completedTasksId.forEach((taskId) => {
+      deleteTask(taskId);
     });
 
+    const newTasks = tasksState.filter((task) => !task.completed_at);
     setTasksState(newTasks);
+    //刪一次就跑一次
   }
 
   //---- tag ----
@@ -223,7 +216,7 @@ export default function TasksList({
       </div>
       {/* tasks list */}
       <div className="p-6 flex flex-col gap-4">
-        {/* {!isListEmpty ? (
+        {/* {isListEmpty ? (
           all
         ) : (
           <div className="w-full pb-4  border-b text-center text-gray-400">

@@ -1,11 +1,21 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/logo.png";
+import getToken from "../../helper/token";
 
 export default function Header({ userName }) {
-  const navigate = useNavigate;
-  function handleLogout() {
-    localStorage.removeItem("userToken");
-    navigate("/");
+  const navigate = useNavigate();
+  async function handleLogout() {
+    const apiUrl = "https://todoo.5xcamp.us/users/sign_out";
+    const authHeader = await getToken();
+    const res = await fetch(apiUrl, {
+      method: "DELETE",
+      headers: authHeader,
+    });
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.removeItem("userToken");
+      navigate("/");
+    }
   }
 
   return (
@@ -15,9 +25,9 @@ export default function Header({ userName }) {
       </div>
       <div className="flex">
         <p className="font-bold">{userName}的待辦清單</p>
-        <a className="ml-6" href="" onClick={handleLogout}>
+        <button className="ml-6" onClick={handleLogout}>
           登出
-        </a>
+        </button>
       </div>
     </header>
   );

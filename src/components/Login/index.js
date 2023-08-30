@@ -7,7 +7,8 @@ import checkLogin from "../../helper/checkLogin";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [loginState, setLoginState] = useState({ email: "", password: "" });
+  const initialLoginState = { email: "", password: "" };
+  const [loginState, setLoginState] = useState(initialLoginState);
 
   useEffect(() => {
     checkToken();
@@ -19,15 +20,11 @@ export default function Login() {
     const auth = await getToken();
     const token = await auth.Authorization; //null => false
     const isChecked = await checkLogin(); //promise???
-    console.log(token);
-    console.log("checkLogin()", isChecked);
-    if (token && isChecked) {
-      console.log("go");
+    if (!token && isChecked) {
       navigate("/tasks");
     }
   }
 
-  // -----------------
   const [formErrors, setFormErrors] = useState({});
 
   function validateForm() {
@@ -63,19 +60,18 @@ export default function Login() {
         body: JSON.stringify(postData),
       });
       const data = await res.json();
-      if (await res.ok) {
-        const headers = res.headers;
-        const token = headers.get("authorization");
-        const userName = data.nickname;
-        console.log(userName);
-        localStorage.setItem("userToken", token);
-        localStorage.setItem("userName", userName);
-        navigate("/tasks");
-      } else {
+      if (await !res.ok) {
         alert("登入失敗，請重試");
-        setLoginState({ email: "", password: "" });
+        setLoginState(initialLoginState);
+        return;
       }
-      console.log(data);
+
+      const headers = res.headers;
+      const token = headers.get("authorization");
+      const userName = data.nickname;
+      localStorage.setItem("userToken", token);
+      localStorage.setItem("userName", userName);
+      navigate("/tasks");
       return data;
     } catch (err) {
       console.log(err);
